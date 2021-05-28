@@ -26,10 +26,10 @@ R_f = 5.
 R_l = 4.
 R_r = 3.1
 
-dr = 0.05
+dr = 0.1
 dR = 0.1
 
-r_array = np.arange(-L/2,L/2,dr)
+r_array = np.arange(-L,L,dr)
 R_array = np.arange(-6.,6.,dR)
 
 Nr = np.size(r_array)
@@ -46,6 +46,27 @@ def hamiltonian(dr,Nr,r_array,R):
     H += -np.eye(Nr,k=-1)/(2.*dr**2)
     return H
 
+# def hamiltonian(dr,Nr,r_array,R):
+#     H = np.zeros([Nr,Nr])
+
+#     H += SM_potential(r_array,R)*np.eye(Nr)
+    
+#     #Diagonal
+#     H += (-49./18.)*-np.eye(Nr)/(2.*dr**2)
+
+#     #First off diagonal
+#     H += (3./2.)*-np.eye(Nr,k=1)/(2.*dr**2)
+#     H += (3./2.)*-np.eye(Nr,k=-1)/(2.*dr**2)
+
+#     #Second off diagonal
+#     H += (-3./20.)*-np.eye(Nr,k=2)/(2.*dr**2)
+#     H += (-3./20.)*-np.eye(Nr,k=-2)/(2.*dr**2)
+
+#     #Third off diagonal
+#     H += (1./90.)*-np.eye(Nr,k=3)/(2.*dr**2)
+#     H += (1./90.)*-np.eye(Nr,k=-3)/(2.*dr**2)
+#     return H
+
 # W,V = eigh_tridiagonal(SM_potential(r_array,R_array[int(Nr/2)]) + 1./dr**2, (-1./(2.*dr**2))*np.ones(Nr-1))
 # print(SM_potential(r_array,R_array[0]))
 print(Nr,NR)
@@ -56,8 +77,8 @@ SE_e = np.zeros([NR])
 
 for i in range(0,NR):
     print(i)
-    diagonal = SM_potential(r_array,R_array[i]) + 1./dr**2
-    offdiagonal =(-1./(2.*dr**2))*np.ones(Nr-1)
+    # diagonal = SM_potential(r_array,R_array[i]) + 1./dr**2
+    # offdiagonal =(-1./(2.*dr**2))*np.ones(Nr-1)
     # W,V = eigh_tridiagonal(diagonal, offdiagonal)
     W,V = eigh(hamiltonian(dr,Nr,r_array,R_array[i]))
 
@@ -69,5 +90,5 @@ for i in range(0,NR):
 plt.plot(R_array,GS_e)
 plt.plot(R_array,FE_e)
 plt.plot(R_array,SE_e)
-
+plt.savefig("bopes.png")
 plt.show() 
