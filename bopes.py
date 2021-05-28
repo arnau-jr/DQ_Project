@@ -1,12 +1,22 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.special import erf
-from scipy.linalg import eigh_tridiagonal
+from scipy.linalg import eigh_tridiagonal,eigh
 def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
     f1 = 1./np.abs(L/2.-R)
     f2 = 1./np.abs(L/2.+R)
-    f3 = -erf(np.abs(R-r)/R_f)/np.abs(R-r)
-    f4 = -erf(np.abs(r-L/2.)/R_r)/np.abs(r-L/2.)
-    f5 = -erf(np.abs(r+L/2.)/R_l)/np.abs(r+L/2.)
+
+    f3 = np.where(np.abs(R-r)<1e-8,\
+          -2./(R_f*np.sqrt(np.pi)),\
+           -erf(np.abs(R-r)/R_f)/np.abs(R-r))
+
+    f4 = np.where(np.abs(r-L/2.)<1e-8,\
+        -2./(R_r*np.sqrt(np.pi)),\
+        -erf(np.abs(r-L/2.)/R_r)/np.abs(r-L/2.))
+
+    f5 = np.where(np.abs(r+L/2.)<1e-8,\
+        -2./(R_l*np.sqrt(np.pi)),\
+        -erf(np.abs(r+L/2.)/R_l)/np.abs(r+L/2.))
     return f1+f2+f3+f4+f5
 
 
@@ -16,13 +26,14 @@ R_f = 5.
 R_l = 4.
 R_r = 3.1
 
-dr = 0.1
+dr = 0.05
 dR = 0.1
 
-r_array = np.arange(-L/2.+2*dr,L/2.-2*dr,dr)
-R_array = np.arange(-L/2.+2*dR,L/2.-2*dR,dR)
+r_array = np.arange(-L/2,L/2,dr)
+R_array = np.arange(-6.,6.,dR)
 
 Nr = np.size(r_array)
+NR = np.size(R_array)
 
 
 def hamiltonian(dr,Nr,r_array,R):
@@ -36,5 +47,27 @@ def hamiltonian(dr,Nr,r_array,R):
     return H
 
 # W,V = eigh_tridiagonal(SM_potential(r_array,R_array[int(Nr/2)]) + 1./dr**2, (-1./(2.*dr**2))*np.ones(Nr-1))
-print(SM_potential(r_array,R_array[int(Nr/2)]))
+# print(SM_potential(r_array,R_array[0]))
+print(Nr,NR)
 
+GS_e = np.zeros([NR])
+FE_e = np.zeros([NR])
+SE_e = np.zeros([NR]) 
+
+for i in range(0,NR):
+    print(i)
+    diagonal = SM_potential(r_array,R_array[i]) + 1./dr**2
+    offdiagonal =(-1./(2.*dr**2))*np.ones(Nr-1)
+    # W,V = eigh_tridiagonal(diagonal, offdiagonal)
+    W,V = eigh(hamiltonian(dr,Nr,r_array,R_array[i]))
+
+
+    GS_e[i] = W[0]
+    FE_e[i] = W[1]
+    SE_e[i] = W[2]
+
+plt.plot(R_array,GS_e)
+plt.plot(R_array,FE_e)
+plt.plot(R_array,SE_e)
+
+plt.show() 
