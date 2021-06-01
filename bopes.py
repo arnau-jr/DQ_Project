@@ -2,6 +2,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.special import erf
 from scipy.linalg import eigh_tridiagonal,eigh
+
+
+#Discretization and array definitions
+L = 19.0
+
+R_f = 5.
+R_l = 4.
+R_r = 3.1
+
+dr = 0.1
+dR = 0.1
+
+r_array = np.arange(-L,L,dr)
+R_array = np.arange(-6.,6.,dR)
+
+Nr = np.size(r_array)
+NR = np.size(R_array)
+
+#Hamiltonian and potential definitions
+
 def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
     f1 = 1./np.abs(L/2.-R)
     f2 = 1./np.abs(L/2.+R)
@@ -18,23 +38,6 @@ def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
         -2./(R_l*np.sqrt(np.pi)),\
         -erf(np.abs(r+L/2.)/R_l)/np.abs(r+L/2.))
     return f1+f2+f3+f4+f5
-
-
-L = 19.0
-
-R_f = 5.
-R_l = 4.
-R_r = 3.1
-
-dr = 0.1
-dR = 0.1
-
-r_array = np.arange(-L,L,dr)
-R_array = np.arange(-6.,6.,dR)
-
-Nr = np.size(r_array)
-NR = np.size(R_array)
-
 
 # def hamiltonian(dr,Nr,r_array,R):
 #     H = np.zeros([Nr,Nr])
@@ -67,30 +70,33 @@ def hamiltonian(dr,Nr,r_array,R):
     H += (1./90.)*-np.eye(Nr,k=-3)/(2.*dr**2)
     return H
 
-print(Nr,NR)
+#Generation of the BOPEs
 
-GS_e = np.zeros([NR])
-FE_e = np.zeros([NR])
-SE_e = np.zeros([NR]) 
+N_states = 3 #How many BOPE states we want to save
 
-GS = np.zeros([NR,Nr])
-FE = np.zeros([NR,Nr])
-SE = np.zeros([NR,Nr]) 
+eigenvalues = np.zeros([NR,N_states])
+eigenstates = np.zeros([NR,Nr,N_states])
 
+print("Diagonalizing ",Nr," by ",Nr," matrices")
 for i in range(0,NR):
-    print(i)
+    print(i," of ",NR,end='\r')
     W,V = eigh(hamiltonian(dr,Nr,r_array,R_array[i]))
 
+    for j in range(0,N_states):
+        eigenvalues[i,j] = W[j]
+        eigenstates[i,:,j] = V[:,j]
 
-    GS_e[i] = W[0]
-    FE_e[i] = W[1]
-    SE_e[i] = W[2]
 
-    GS[i,:] = V[:,0]
-    FE[i,:] = V[:,1]
-    SE[i,:] = V[:,2]
+with open("eigenvalues.npy","wb") as f:
+    np.save(f,eigenvalues)
 
-plt.plot(R_array,GS_e)
-plt.plot(R_array,FE_e)
-plt.plot(R_array,SE_e)
+with open("eigenvstates.npy","wb") as f:
+    np.save(f,eigenstates)
+
+plt.xlabel(r"$R(a_0)$")
+plt.ylabel(r"$E(E_H)$")
+plt.plot(R_array,eigenvalues[:,0],label="Ground state")
+plt.plot(R_array,eigenvalues[:,1],label="First excited state")
+plt.plot(R_array,eigenvalues[:,2],label="Second excited state")
+plt.legend()
 plt.savefig("bopes.png")
