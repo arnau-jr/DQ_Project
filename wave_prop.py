@@ -7,6 +7,13 @@ dR = 0.1
 R_array = np.arange(-6.,6.,dR)
 dt = 1e-4
 
+## loading the saved arrays from the bopes step
+non_adiabatic = np.load("non_adiabatic_coupling.npy")
+eigenstates = np.load("eigenvstates.npy")
+eigenvalues = np.load("eigenvalues.npy")
+
+print(eigenstates)
+
 def wave_packet(x,x0=-4.,sigma=1/np.sqrt(2.85)):
     """
     Initializing the Gaussian wavepacket around x0 = -4 and with sigma = 1/sqrt(2.85) at the ground state
