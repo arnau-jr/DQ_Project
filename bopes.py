@@ -115,6 +115,8 @@ def get_nonadiabatic_couplings(NR,dr,N_states,eigenstates,M=1836.152673):
                 phi_plus[-1] = 0.
                 phi_minus = np.roll(eigenstates[iR,:,i],-1)
                 phi_minus[0] = 0.
+
+                #Apply laplacian and integrate (assuming phi=0. at the edges)
                 S[iR,i,j] = dr*np.sum(eigenstates[iR,:,j]*(1./M)\
                     *((eigenstates[iR,:,i] - 0.5*phi_plus - 0.5*phi_minus)/dr**2))
 
