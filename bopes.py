@@ -100,3 +100,24 @@ plt.plot(R_array,eigenvalues[:,1],label="First excited state")
 plt.plot(R_array,eigenvalues[:,2],label="Second excited state")
 plt.legend()
 plt.savefig("bopes.png")
+plt.close()
+
+
+#Computing Non-Adiabatic couplings
+
+def get_nonadiabatic_couplings(NR,dr,N_states,eigenstates,M=1836.152673):
+    S = np.zeros([NR,N_states,N_states])
+
+    for iR in range(0,NR):
+        for i in range(0,N_states):
+            for j in range(i,N_states):
+                phi_plus = np.roll(eigenstates[iR,:,i],1)
+                phi_plus[-1] = 0.
+                phi_minus = np.roll(eigenstates[iR,:,i],-1)
+                phi_minus[0] = 0.
+                S[iR,i,j] = dr*np.sum(eigenstates[iR,:,j]*(1./M)\
+                    *((eigenstates[iR,:,i] - 0.5*phi_plus - 0.5*phi_minus)/dr**2))
+
+    return S
+
+S = get_nonadiabatic_couplings(NR,dr,N_states,eigenstates)
