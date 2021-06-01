@@ -155,8 +155,8 @@ def get_nonadiabatic_couplings(NR,dr,N_states,eigenstates,M=1836.152673):
             M: float number, comes from the proton/electron mass ratio 
         
         Returns:
-            S: 3D np.array ([NR,N_states,N_states]), upper triangular matrix 
-            with computed nonadiabatic couplings for each point in R-space 
+            S: 3D np.array ([NR,N_states,N_states]), matrix with computed 
+            nonadiabatic couplings for each point in R-space 
             and for each eigenstate 
     """
     S = np.zeros([NR,N_states,N_states])
@@ -172,10 +172,12 @@ def get_nonadiabatic_couplings(NR,dr,N_states,eigenstates,M=1836.152673):
                 #Apply laplacian and integrate (assuming phi=0. at the edges)
                 S[iR,i,j] = dr*np.sum(eigenstates[iR,:,j]*(1./M)\
                     *((eigenstates[iR,:,i] - 0.5*phi_plus - 0.5*phi_minus)/dr**2))
+                
+                S[iR,j,i] = S[iR,i,j]
 
     return S
 
 S = get_nonadiabatic_couplings(NR,dr,N_states,eigenstates)
-
+print(S)
 with open("non_adiabatic_coupling.npy","wb") as f:
     np.save(f,S)
