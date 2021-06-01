@@ -178,6 +178,6 @@ def get_nonadiabatic_couplings(NR,dr,N_states,eigenstates,M=1836.152673):
     return S
 
 S = get_nonadiabatic_couplings(NR,dr,N_states,eigenstates)
-print(S.shape)
+
 with open("non_adiabatic_coupling.npy","wb") as f:
     np.save(f,S)
