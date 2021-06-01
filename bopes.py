@@ -23,6 +23,28 @@ NR = np.size(R_array)
 #Hamiltonian and potential definitions
 
 def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
+
+    """
+    Computation of the Shin-Metiu (SM) potential. The electron
+    is embedded in r-space and the moving ion is embedded in
+    R-space. Note the difference of lower and upper case 
+    notation of each. Each part of the function (f1,f2,f3,f4,f5) 
+    is representing one term of the potential. And for the cases
+    that the system would blow up, the limits of the functions
+    are used (f3,f4,f5).
+
+        Args:
+            r: 1D np.array, r-space vector
+            R: float number, specific point in R-space
+            L: float number, size of the system 
+            R_l: float number, parameter given for this regime
+            R_r: float number, parameter given for this regime
+            R_f: float number, parameter given for this regime
+
+        Returns:
+            SM: 1D np.array, SM-potential vector over r-space
+    """
+
     f1 = 1./np.abs(L/2.-R)
     f2 = 1./np.abs(L/2.+R)
 
@@ -37,19 +59,32 @@ def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
     f5 = np.where(np.abs(r+L/2.)<1e-8,\
         -2./(R_l*np.sqrt(np.pi)),\
         -erf(np.abs(r+L/2.)/R_l)/np.abs(r+L/2.))
-    return f1+f2+f3+f4+f5
 
-# def hamiltonian(dr,Nr,r_array,R):
-#     H = np.zeros([Nr,Nr])
+    SM = f1+f2+f3+f4+f5
 
-#     H += SM_potential(r_array,R)*np.eye(Nr)
-    
-#     H += np.eye(Nr)/dr**2
-#     H += -np.eye(Nr,k=1)/(2.*dr**2)
-#     H += -np.eye(Nr,k=-1)/(2.*dr**2)
-#     return H
+    return SM
+
 
 def hamiltonian(dr,Nr,r_array,R):
+
+    """
+        The Hamiltonian of the system is represented as a matrix ([Nr,Nr]).
+
+        Args: 
+            dr: float number, discretization step for r-space
+            Nr: int number, site of the discretized r-space vector
+            r_array: 1D np.array, discretized r-space vector
+            R: float number, spcific point in R-space that is used
+               to compute the hamiltonian at that point. Needs to be 
+               iterated over the full R-space and for each point in R
+               the whole r-space vector is needed for computation. 
+
+        Returns: 
+            H: 2D np.array, matrix with upper-, lower- and diagonal
+               values up to third order. Representing the Shin-Metiu
+               potential of this system. 
+    """
+
     H = np.zeros([Nr,Nr])
 
     H += SM_potential(r_array,R)*np.eye(Nr)
@@ -106,6 +141,24 @@ plt.close()
 #Computing Non-Adiabatic couplings
 
 def get_nonadiabatic_couplings(NR,dr,N_states,eigenstates,M=1836.152673):
+    """
+    Computing the non-adiabatic coupling factors for each point in the R-space
+    and the coupling of the computed eigenstates. By integrating over r-space,
+    taking the laplacian of the i-th eigenstate and multiplying it with the
+    j-th eigenstate. 
+
+        Args: 
+            NR: int number, size of discretized R-space vector
+            dr: float number, discretization step
+            N_states: int number, number of eigenstates that were computed
+            eigenstates: 3D np.array ([NR, Nr, N_states]), eigenstates matrix
+            M: float number, comes from the proton/electron mass ratio 
+        
+        Returns:
+            S: 3D np.array ([NR,N_states,N_states]), upper triangular matrix 
+            with computed nonadiabatic couplings for each point in R-space 
+            and for each eigenstate 
+    """
     S = np.zeros([NR,N_states,N_states])
 
     for iR in range(0,NR):
