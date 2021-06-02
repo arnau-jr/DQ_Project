@@ -15,7 +15,7 @@ dr = 0.1
 dR = 0.1
 
 r_array = np.arange(-L,L,dr)
-R_array = np.arange(-6.,6.,dR)
+R_array = np.arange(-9.,9.,dR)
 
 Nr = np.size(r_array)
 NR = np.size(R_array)
@@ -130,6 +130,8 @@ with open("eigenvstates.npy","wb") as f:
 
 plt.xlabel(r"$R(a_0)$")
 plt.ylabel(r"$E(E_H)$")
+plt.xlim([-6,6])
+plt.ylim([-0.3,-0.1])
 plt.plot(R_array,eigenvalues[:,0],label="Ground state")
 plt.plot(R_array,eigenvalues[:,1],label="First excited state")
 plt.plot(R_array,eigenvalues[:,2],label="Second excited state")
