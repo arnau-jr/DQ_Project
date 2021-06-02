@@ -61,7 +61,7 @@ print(pot.shape)
 
 ## reshape the potential vector and transfrom into N*N matrix
 N = Nr*NR
-pot_new = pot.reshape(N)*np.eye((N)
+pot_new = pot.reshape(N)*np.eye((N))
 
 def laplacian(dr,N):
 
