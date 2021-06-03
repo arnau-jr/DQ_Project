@@ -109,9 +109,8 @@ Te_full = np.kron(Te,np.eye(NR))
 Tp_full = np.kron(np.eye(Nr),Tp)
 
 
-#Te_full = (np.eye(N=N,M=Nr)/m)@Te_
-#Tp_full = (np.eye(N=N,M=NR)/M)@Tp_
-
 ## put the terms together and you get the full hamiltonian for the system
 full_hamiltonian = pot_new + Te_full + Tp_full
-print(full_hamiltonian)
+
+with open("full_hamiltonian.npy","wb") as f:
+    np.save(f,full_hamiltonian)
