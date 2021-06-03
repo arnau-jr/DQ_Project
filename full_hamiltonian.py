@@ -99,17 +99,18 @@ def laplacian(dr,N):
 
 ## compute laplacian for the kinetic parts and put the into the same space
 ## with the kronecker product
-Te = laplacian(dr,Nr)
-Tp = laplacian(dR,NR)
-
-Te_ = np.kron(Te,np.ones(NR))
-Tp_ = np.kron(np.ones(Nr),Tp)
-
 m = 1
 M = 1836.152673
 
-Te_full = (np.eye(N=N,M=Nr)/m)@Te_
-Tp_full = (np.eye(N=N,M=NR)/M)@Tp_
+Te = laplacian(dr,Nr)/m
+Tp = laplacian(dR,NR)/M
+
+Te_full = np.kron(Te,np.eye(NR))
+Tp_full = np.kron(np.eye(Nr),Tp)
+
+
+#Te_full = (np.eye(N=N,M=Nr)/m)@Te_
+#Tp_full = (np.eye(N=N,M=NR)/M)@Tp_
 
 ## put the terms together and you get the full hamiltonian for the system
 full_hamiltonian = pot_new + Te_full + Tp_full
