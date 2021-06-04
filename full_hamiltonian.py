@@ -142,18 +142,20 @@ def evolve_psi_RK4(dt,hamiltonian,wave):
     k4 = compute_f(hamiltonian,wave +  dt*k3    )
     return wave + (dt/6.)*(k1 + 2.*k2 + 2.*k3 + k4)
 
-dt = 1e-2
+dt = 1e-4
 #endtime = 30/(2.418884e-2)
-endtime = 10
+endtime = 0.1
 time = np.arange(0,endtime,dt)
 time_len = np.size(time)
 psi_len = np.size(psi0)
-psi_evolved = np.zeros((int(time_len/1000), psi_len))
+psi_evolved = np.zeros((int(time_len/100), psi_len))
+temp_psi = psi0
 
 for i in range(time_len):
     print(i," of ",time_len,end='\r')
-    if i%1000 == 0:
-        psi_evolved[int(i/1000),:] = evolve_psi_RK4(dt,full_hamiltonian,psi0)
+    temp_psi = evolve_psi_RK4(dt,full_hamiltonian,temp_psi)
+    if i%100 == 0:
+        psi_evolved[int(i%100)] = temp_psi
 
 with open("psi_evolved.npy","wb") as f:
     np.save(f,psi_evolved)
