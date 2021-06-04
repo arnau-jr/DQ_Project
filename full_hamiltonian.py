@@ -46,8 +46,8 @@ def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
     return SM
 
 ## changed discretization step, otherwise too big of a matrix 
-dr = 0.2
-dR = 0.2
+dr = 0.25
+dR = 0.25
 r_array = np.arange(-19,19,dr)
 R_array = np.arange(-9,9,dR)
 
@@ -57,7 +57,7 @@ r_arr, R_arr = np.meshgrid(r_array, R_array)
 Nr = np.size(r_array)
 NR = np.size(R_array)
 pot = SM_potential(r=r_arr, R=R_arr)
-print(pot.shape)
+#print(pot.shape)
 
 ## reshape the potential vector and transfrom into N*N matrix
 N = Nr*NR
@@ -108,9 +108,52 @@ Tp = laplacian(dR,NR)/M
 Te_full = np.kron(Te,np.eye(NR))
 Tp_full = np.kron(np.eye(Nr),Tp)
 
-
 ## put the terms together and you get the full hamiltonian for the system
 full_hamiltonian = pot_new + Te_full + Tp_full
+#print(full_hamiltonian.shape)
 
-with open("full_hamiltonian.npy","wb") as f:
-    np.save(f,full_hamiltonian)
+def wave_packet(x,x0=-4.,sigma=1/np.sqrt(2.85)):
+    """
+    Initializing the Gaussian wavepacket around x0 = -4 and with sigma = 1/sqrt(2.85) at the ground state
+    of the system. Instead of splitting the function in real and imaginary part, the wavepacket 
+    is initialized with both parts by multiplying with np.exp(1j+1).
+    """
+    return np.exp(-(x-x0)**2/(2*sigma**2))/np.sqrt(np.sqrt(np.pi)*sigma)
+
+
+eigenstates = np.load("eigenvstates.npy")
+ex1 = eigenstates[:,:,1]
+psi0 = np.zeros([Nr*NR])
+
+for i in range(0,Nr):
+    for j in range(0,NR):
+        psi0[NR*i+j] = ex1[np.where(R_array==-4.)[0],i]*wave_packet(R_array[j])
+
+#print(psi0.shape)
+
+def compute_f(hamiltonian, wave):
+    return hamiltonian@wave
+
+def evolve_psi_RK4(dt,hamiltonian,wave):
+
+    k1 = compute_f(hamiltonian,wave)
+    k2 = compute_f(hamiltonian,wave + (dt/2.)*k1)
+    k3 = compute_f(hamiltonian,wave + (dt/2.)*k2)
+    k4 = compute_f(hamiltonian,wave +  dt*k3    )
+    return wave + (dt/6.)*(k1 + 2.*k2 + 2.*k3 + k4)
+
+dt = 1e-2
+#endtime = 30/(2.418884e-2)
+endtime = 10
+time = np.arange(0,endtime,dt)
+time_len = np.size(time)
+psi_len = np.size(psi0)
+psi_evolved = np.zeros((int(time_len/1000), psi_len))
+
+for i in range(time_len):
+    print(i," of ",time_len,end='\r')
+    if i%1000 == 0:
+        psi_evolved[int(i/1000),:] = evolve_psi_RK4(dt,full_hamiltonian,psi0)
+
+with open("psi_evolved.npy","wb") as f:
+    np.save(f,psi_evolved)
