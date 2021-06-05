@@ -145,17 +145,24 @@ def evolve_psi_RK4(dt,hamiltonian,wave):
 dt = 1e-4
 #endtime = 30/(2.418884e-2)
 endtime = 0.01
-time = np.arange(0,endtime,dt)
-time_len = np.size(time)
-psi_len = np.size(psi0)
-psi_evolved = np.zeros((int(time_len/10), psi_len))
-temp_psi = psi0
 
-for i in range(time_len):
-    print(i," of ",time_len,end='\r')
-    temp_psi = evolve_psi_RK4(dt,full_hamiltonian,temp_psi)
-    if i%10 == 0:
-        psi_evolved[int(i/10)] = temp_psi
+def simulate(psi,hamiltonian,dt,endtime,snaps):
+    time = np.arange(0,endtime,dt)
+    time_len = np.size(time)
+    print(time_len)
+    psi_len = np.size(psi)
+    psi_evolved = np.zeros((int(time_len/snaps), psi_len))
+    print(psi_evolved.shape)
+    temp_psi = psi
+    for i in range(time_len-1):
+        print(i," of ",time_len,end='\r')
+        temp_psi = evolve_psi_RK4(dt,full_hamiltonian,temp_psi)
+        if i%snaps == 0:
+            psi_evolved[int(i/snaps)] = temp_psi
+    
+    return psi_evolved
+
+psi_evolved = simulate(psi=psi0,hamiltonian=full_hamiltonian,dt=1e-7,endtime=1e-5,snaps=10)
 
 with open("psi_evolved.npy","wb") as f:
     np.save(f,psi_evolved)
