@@ -11,8 +11,8 @@ R_f = 5.
 R_l = 4.
 R_r = 3.1
 
-dr = 0.2
-dR = 0.2
+dr = 0.25
+dR = 0.25
 
 r_array = np.arange(-L,L,dr)
 R_array = np.arange(-9.,9.,dR)
