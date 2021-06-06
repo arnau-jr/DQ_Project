@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import full_hamiltonian as fh
+import observables as obv
 from matplotlib import animation
 
 def wave_packet(x,x0=-4.,sigma=1/np.sqrt(2.85)):
@@ -11,8 +13,10 @@ def wave_packet(x,x0=-4.,sigma=1/np.sqrt(2.85)):
     return np.cdouble(np.exp(-(x-x0)**2/(2*sigma**2))/np.sqrt(np.sqrt(np.pi)*sigma))
 
 ## parameters and preliminaries
-dR = 0.1
-R_array = np.arange(-9.,9.,dR)
+dr = 0.25
+dR = 0.25
+r_array = np.arange(-19,19,dr)
+R_array = np.arange(-9,9,dR)
 dt = 1e-4
 
 ## loading the saved arrays from the bopes step
@@ -21,30 +25,63 @@ eigenstates = np.load("eigenvstates.npy")
 eigenvalues = np.load("eigenvalues.npy")
 
 NR,Nr,N_states = eigenstates.shape
-
-psi0 = np.zeros([Nr*NR])
-for i in range(0,Nr):
-    for j in range(0,NR):
-        psi0[NR*i+j] = eigenstates[np.where(R_array==-4.)[0],i,1]*wave_packet(R_array[j])
-
-print(eigenstates)
+ex1 = eigenstates[:,:,1]
+psi0 = np.zeros([Nr*NR],dtype=np.complex64)
 
 
-def compute_f(dx,m,x_array,psi,V,**kwargs):
-    #Trick to do the psi(x+dx) and psi(x-dx)
-    psi_plus = np.roll(psi,1)
-    psi_plus[-1] = 0.
-    psi_minus = np.roll(psi,-1)
-    psi_minus[0] = 0.
+psi0 = np.outer(ex1[np.where(R_array==-4.)[0][0],:],wave_packet(R_array)).flatten()
 
-    #Computation of the right hand side of Schr. eq.
-    f = 1j*(psi_plus - 2*psi + psi_minus)/(2.*m*dx**2) - 1j*V(x_array,**kwargs)*psi
-    return f
 
-def evolve_psi_RK4(dt,dx,m,x_array,psi,V,**kwargs):
+dt = 1e-4
+#endtime = 30/(2.418884e-2)
+endtime = 0.01
 
-    k1 = compute_f(dx,m,x_array,psi             ,V,**kwargs)
-    k2 = compute_f(dx,m,x_array,psi + (dt/2.)*k1,V,**kwargs)
-    k3 = compute_f(dx,m,x_array,psi + (dt/2.)*k2,V,**kwargs)
-    k4 = compute_f(dx,m,x_array,psi +  dt*k3    ,V,**kwargs)
-    return psi + (dt/6.)*(k1 + 2.*k2 + 2.*k3 + k4)
+def compute_f(hamiltonian, wave):
+    return hamiltonian@wave
+
+def evolve_psi_RK4(dt,hamiltonian,wave):
+
+    k1 = compute_f(hamiltonian,wave)
+    k2 = compute_f(hamiltonian,wave + (dt/2.)*k1)
+    k3 = compute_f(hamiltonian,wave + (dt/2.)*k2)
+    k4 = compute_f(hamiltonian,wave +  dt*k3    )
+    return wave + (dt/6.)*(k1 + 2.*k2 + 2.*k3 + k4)
+
+def simulate(psi,hamiltonian,dt,endtime,snaps):
+    time = np.arange(0,endtime,dt)
+    time_len = np.size(time)
+    print(time_len)
+    psi_len = np.size(psi)
+    psi_evolved = np.zeros((int(time_len/snaps), psi_len),dtype=np.complex64)
+    nucleus_evolved = np.zeros((int(time_len/snaps),NR))
+    print(psi_evolved.shape)
+    temp_psi = psi
+    for i in range(time_len-1):
+        print(i," of ",time_len,end='\r')
+        temp_psi = evolve_psi_RK4(dt,hamiltonian,temp_psi)
+        if i%snaps == 0:
+            psi_evolved[int(i/snaps)] = temp_psi
+            nucleus_evolved[int(i/snaps),:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
+    
+    return psi_evolved,nucleus_evolved
+
+full_hamiltonian_mat = fh.build_hamiltonian()
+psi_evolved,nucleus_evolved = simulate(psi=psi0,hamiltonian=full_hamiltonian_mat,dt=1e-7,endtime=1e-5,snaps=10)
+
+with open("psi_evolved.npy","wb") as f:
+    np.save(f,psi_evolved)
+
+
+## A: Some plots for testing different stuff
+# plt.figure()
+# plt.plot(np.abs(psi0)**2)
+# plt.plot(ex1[np.where(R_array==-4.)[0][0],:])
+# plt.plot(R_array,obv.get_reduced_nuclear_density(NR,Nr,dr,psi0))
+# plt.plot(R_array,np.abs(wave_packet(R_array))**2)
+# plt.plot(r_array,obv.get_reduced_electron_density(NR,Nr,dR,psi0))
+# plt.plot(r_array,np.abs(ex1[np.where(R_array==-4.)[0][0],:])**2)
+# plt.plot(R_array,nucleus_evolved[0,:])
+# plt.plot(R_array,nucleus_evolved[1,:])
+# plt.show()
+# plt.close()
+

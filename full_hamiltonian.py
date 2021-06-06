@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import linalg as la
+# from scipy import linalg as la
 from scipy.special import erf
 
 def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
@@ -45,24 +45,6 @@ def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
 
     return SM
 
-## changed discretization step, otherwise too big of a matrix 
-dr = 0.25
-dR = 0.25
-r_array = np.arange(-19,19,dr)
-R_array = np.arange(-9,9,dR)
-
-## with mesgrid two arrays can be parsed through the potential function
-## without the same size
-r_arr, R_arr = np.meshgrid(r_array, R_array)
-Nr = np.size(r_array)
-NR = np.size(R_array)
-pot = SM_potential(r=r_arr, R=R_arr)
-#print(pot.shape)
-
-## reshape the potential vector and transfrom into N*N matrix
-N = Nr*NR
-pot_new = pot.reshape(N)*np.eye((N))
-
 def laplacian(dr,N):
 
     """
@@ -97,72 +79,40 @@ def laplacian(dr,N):
     return L
 
 
-## compute laplacian for the kinetic parts and put the into the same space
-## with the kronecker product
-m = 1
-M = 1836.152673
-
-Te = laplacian(dr,Nr)/m
-Tp = laplacian(dR,NR)/M
-
-Te_full = np.kron(Te,np.eye(NR))
-Tp_full = np.kron(np.eye(Nr),Tp)
-
-## put the terms together and you get the full hamiltonian for the system
-full_hamiltonian = pot_new + Te_full + Tp_full
-#print(full_hamiltonian.shape)
-
-def wave_packet(x,x0=-4.,sigma=1/np.sqrt(2.85)):
-    """
-    Initializing the Gaussian wavepacket around x0 = -4 and with sigma = 1/sqrt(2.85) at the ground state
-    of the system. Instead of splitting the function in real and imaginary part, the wavepacket 
-    is initialized with both parts by multiplying with np.exp(1j+1).
-    """
-    return np.exp(-(x-x0)**2/(2*sigma**2))/np.sqrt(np.sqrt(np.pi)*sigma)
+def build_hamiltonian():
 
 
-eigenstates = np.load("eigenvstates.npy")
-ex1 = eigenstates[:,:,1]
-psi0 = np.zeros([Nr*NR])
+    ## changed discretization step, otherwise too big of a matrix 
+    dr = 0.25
+    dR = 0.25
+    r_array = np.arange(-19,19,dr)
+    R_array = np.arange(-9,9,dR)
 
-for i in range(0,Nr):
-    for j in range(0,NR):
-        psi0[NR*i+j] = ex1[np.where(R_array==-4.)[0],i]*wave_packet(R_array[j])
+    ## with mesgrid two arrays can be parsed through the potential function
+    ## without the same size
+    r_arr, R_arr = np.meshgrid(r_array, R_array)
+    Nr = np.size(r_array)
+    NR = np.size(R_array)
+    pot = SM_potential(r=r_arr, R=R_arr)
+    #print(pot.shape)
 
-#print(psi0.shape)
+    ## reshape the potential vector and transfrom into N*N matrix
+    N = Nr*NR
+    pot_new = pot.reshape(N)*np.eye((N))
 
-def compute_f(hamiltonian, wave):
-    return hamiltonian@wave
+    ## compute laplacian for the kinetic parts and put the into the same space
+    ## with the kronecker product
+    m = 1
+    M = 1836.152673
 
-def evolve_psi_RK4(dt,hamiltonian,wave):
+    Te = laplacian(dr,Nr)/m
+    Tp = laplacian(dR,NR)/M
 
-    k1 = compute_f(hamiltonian,wave)
-    k2 = compute_f(hamiltonian,wave + (dt/2.)*k1)
-    k3 = compute_f(hamiltonian,wave + (dt/2.)*k2)
-    k4 = compute_f(hamiltonian,wave +  dt*k3    )
-    return wave + (dt/6.)*(k1 + 2.*k2 + 2.*k3 + k4)
+    Te_full = np.kron(Te,np.eye(NR))
+    Tp_full = np.kron(np.eye(Nr),Tp)
 
-dt = 1e-4
-#endtime = 30/(2.418884e-2)
-endtime = 0.01
+    ## put the terms together and you get the full hamiltonian for the system
+    full_hamiltonian = pot_new + Te_full + Tp_full
+    #print(full_hamiltonian.shape)
+    return full_hamiltonian
 
-def simulate(psi,hamiltonian,dt,endtime,snaps):
-    time = np.arange(0,endtime,dt)
-    time_len = np.size(time)
-    print(time_len)
-    psi_len = np.size(psi)
-    psi_evolved = np.zeros((int(time_len/snaps), psi_len))
-    print(psi_evolved.shape)
-    temp_psi = psi
-    for i in range(time_len-1):
-        print(i," of ",time_len,end='\r')
-        temp_psi = evolve_psi_RK4(dt,full_hamiltonian,temp_psi)
-        if i%snaps == 0:
-            psi_evolved[int(i/snaps)] = temp_psi
-    
-    return psi_evolved
-
-psi_evolved = simulate(psi=psi0,hamiltonian=full_hamiltonian,dt=1e-7,endtime=1e-5,snaps=10)
-
-with open("psi_evolved.npy","wb") as f:
-    np.save(f,psi_evolved)
