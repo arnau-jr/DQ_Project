@@ -15,10 +15,9 @@ def get_adiabatic_pops(NR,Nr,dR,N_states,eigenstates,psi):
 def get_reduced_nuclear_density(NR,Nr,dr,psi):
     rho = np.abs(psi)**2
     den = np.zeros([NR])
-    #Should work, but loop is inefficient
-    for i in range(NR):
-        den[i] = np.sum(rho[i::Nr])*dr
+    rhobis = np.reshape(rho,(Nr,NR))
 
+    den = np.sum(rhobis,0)*dr
     return den
 
 def get_reduced_electron_density(NR,Nr,dR,psi):
