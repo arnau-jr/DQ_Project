@@ -31,11 +31,13 @@ wave_p = wave_packet(x=R_array)
 wave_p_vec = matlib.repmat(wave_p,1,Nr).T
 phi0 = ex1.flatten()*wave_p_vec
 wave = phi0.sum(axis=0)
+
 #### IT IS NORMED FOR NOW SINCE THE EIGENSTATES ARE NOT
+## A: it seems that 
 wave = wave/(np.sqrt(np.sum(np.abs(wave)**2)*dr*dR))
+print(np.sum(np.abs(wave)**2)*dr*dR)
 
 
-dt = 1e-4
 #endtime = 30/(2.418884e-2)
 endtime = 0.01
 
@@ -68,8 +70,8 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
     
     return psi_evolved,nucleus_evolved
 
-full_hamiltonian_mat = fh.build_hamiltonian()
-psi_evolved,nucleus_evolved = simulate(psi=psi0,hamiltonian=full_hamiltonian_mat,dt=1e-7,endtime=1e-5,snaps=10)
+# full_hamiltonian_mat = fh.build_hamiltonian()
+# psi_evolved,nucleus_evolved = simulate(psi=psi0,hamiltonian=full_hamiltonian_mat,dt=1e-7,endtime=1e-5,snaps=10)
 
 with open("psi_evolved.npy","wb") as f:
     np.save(f,psi_evolved)

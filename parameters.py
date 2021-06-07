@@ -6,10 +6,10 @@ R_f = 5.
 R_l = 4.
 R_r = 3.1
 
-dr = 0.25
+dr = 1.
 dR = 0.25
 
-r_array = np.arange(-120.,120.,dr)
+r_array = np.arange(-60.,60.,dr)
 R_array = np.arange(-9.,9.,dR)
 
 Nr = np.size(r_array)

@@ -103,7 +103,7 @@ for i in range(0,NR):
 
     for j in range(0,N_states):
         eigenvalues[i,j] = W[j]
-        eigenstates[i,:,j] = V[:,j]/np.sqrt(np.sum(V[:,j]**2)*dr)
+        eigenstates[i,:,j] = V[:,j]/np.sqrt(np.sum(np.abs(V[:,j])**2)*dr)
 
 
 with open("eigenvalues.npy","wb") as f:
