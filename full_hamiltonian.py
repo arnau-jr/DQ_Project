@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-# from scipy import linalg as la
+from parameters import *
+from scipy import sparse as sp
 from scipy.special import erf
 
 def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
@@ -81,8 +82,6 @@ def laplacian(dr,N):
 
 def build_hamiltonian():
 
-
-
     ## with mesgrid two arrays can be parsed through the potential function
     ## without the same size
     r_arr, R_arr = np.meshgrid(r_array, R_array)
@@ -91,7 +90,7 @@ def build_hamiltonian():
 
     ## reshape the potential vector and transfrom into N*N matrix
     N = Nr*NR
-    pot_new = pot.reshape(N)*np.eye((N))
+    pot_new = pot.reshape(N)
 
     ## compute laplacian for the kinetic parts and put the into the same space
     ## with the kronecker product
@@ -101,11 +100,11 @@ def build_hamiltonian():
     Te = laplacian(dr,Nr)/m
     Tp = laplacian(dR,NR)/M
 
-    Te_full = np.kron(Te,np.eye(NR))
-    Tp_full = np.kron(np.eye(Nr),Tp)
+    Te_full = sp.kron(Te,np.eye(NR))
+    Tp_full = sp.kron(np.eye(Nr),Tp)
 
     ## put the terms together and you get the full hamiltonian for the system
-    full_hamiltonian = pot_new + Te_full + Tp_full
-    #print(full_hamiltonian.shape)
+    full_hamiltonian = sp.diags(pot_new) + Te_full + Tp_full
+
     return full_hamiltonian
 

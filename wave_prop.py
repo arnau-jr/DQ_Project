@@ -32,10 +32,9 @@ print("Deco. dynamics pops of initial wave:\n",obv.get_decoherence_dynamics(NR,N
 
 
 #endtime = 30/(2.418884e-2)
-endtime = 0.01
 
 def compute_f(hamiltonian, wave):
-    return hamiltonian@wave
+    return -1j*hamiltonian.dot(wave)
 
 def evolve_psi_RK4(dt,hamiltonian,wave):
 
@@ -52,7 +51,6 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
     psi_len = np.size(psi)
     psi_evolved = np.zeros((int(time_len/snaps), psi_len),dtype=np.complex64)
     nucleus_evolved = np.zeros((int(time_len/snaps),NR))
-    print(psi_evolved.shape)
     temp_psi = psi
     for i in range(time_len-1):
         print(i," of ",time_len,end='\r')
@@ -63,8 +61,8 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
     
     return psi_evolved,nucleus_evolved
 
-# full_hamiltonian_mat = fh.build_hamiltonian()
-# psi_evolved,nucleus_evolved = simulate(psi=psi0,hamiltonian=full_hamiltonian_mat,dt=1e-7,endtime=1e-5,snaps=10)
+full_hamiltonian_mat = fh.build_hamiltonian()
+psi_evolved,nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=1.,snaps=10)
 
 # with open("psi_evolved.npy","wb") as f:
 #     np.save(f,psi_evolved)
@@ -78,9 +76,28 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
 # plt.plot(R_array,np.abs(wave_packet(R_array))**2,label="Wave packet")
 # plt.plot(r_array,obv.get_reduced_electron_density(NR,Nr,dR,psi0))
 # plt.plot(r_array,np.abs(ex1[np.where(R_array==-4.)[0][0],:])**2)
-# plt.plot(R_array,nucleus_evolved[0,:])
-# plt.plot(R_array,nucleus_evolved[1,:])
+# plt.plot(R_array,nucleus_evolved[0,:],label="tinitial")
+# plt.plot(R_array,nucleus_evolved[50,:],label="tfinal")
 # plt.legend()
 # plt.show()
 # plt.close()
+
+#Animation
+fig,ax = plt.subplots(1,1)
+
+ax.set_xlabel("R")
+ax.set_ylabel(r"$\rho_N(R)$")
+mod_line = ax.plot(R_array,nucleus_evolved[0,:])
+ax.legend([r"$\rho_N(R)$"])
+
+def animat(i):
+    mod_line[0].set_ydata(nucleus_evolved[i-1,:])
+    return mod_line
+
+ani = animation.FuncAnimation(fig,animat,frames=nucleus_evolved.shape[0],interval=10.)
+writervideo = animation.FFMpegWriter(fps=60) 
+ani.save("ani_nucleus.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
+
+plt.show()
+plt.close()
 
