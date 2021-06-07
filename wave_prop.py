@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import full_hamiltonian as fh
 import observables as obv
 from matplotlib import animation
+from numpy import matlib
 
 def wave_packet(x,x0=-4.,sigma=1/np.sqrt(2.85)):
     """
@@ -30,6 +31,14 @@ psi0 = np.zeros([Nr*NR],dtype=np.complex64)
 
 
 psi0 = np.outer(ex1[np.where(R_array==-4.)[0][0],:],wave_packet(R_array)).flatten()
+
+#### THIS IS THE PART OF THE NEWLY CONSTRUCTED WAVE
+wave_p = wave_packet(x=R_array)
+wave_p_vec = matlib.repmat(wave_p,1,Nr).T
+phi0 = ex1.flatten()*wave_p_vec
+wave = phi0.sum(axis=0)
+#### IT IS NORMED FOR NOW SINCE THE EIGENSTATES ARE NOT
+wave = wave/(np.sqrt(np.sum(np.abs(wave)**2)*dr*dR))
 
 
 dt = 1e-4
