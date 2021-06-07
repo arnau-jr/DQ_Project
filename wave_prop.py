@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import full_hamiltonian as fh
 import observables as obv
+from parameters import *
 from matplotlib import animation
 from numpy import matlib
 
@@ -12,13 +13,6 @@ def wave_packet(x,x0=-4.,sigma=1/np.sqrt(2.85)):
     is initialized with both parts by multiplying with np.exp(1j+1).
     """
     return np.cdouble(np.exp(-(x-x0)**2/(2*sigma**2))/np.sqrt(np.sqrt(np.pi)*sigma))
-
-## parameters and preliminaries
-dr = 0.25
-dR = 0.25
-r_array = np.arange(-19,19,dr)
-R_array = np.arange(-9,9,dR)
-dt = 1e-4
 
 ## loading the saved arrays from the bopes step
 non_adiabatic = np.load("non_adiabatic_coupling.npy")

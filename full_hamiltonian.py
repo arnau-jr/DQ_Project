@@ -82,17 +82,10 @@ def laplacian(dr,N):
 def build_hamiltonian():
 
 
-    ## changed discretization step, otherwise too big of a matrix 
-    dr = 0.25
-    dR = 0.25
-    r_array = np.arange(-19,19,dr)
-    R_array = np.arange(-9,9,dR)
 
     ## with mesgrid two arrays can be parsed through the potential function
     ## without the same size
     r_arr, R_arr = np.meshgrid(r_array, R_array)
-    Nr = np.size(r_array)
-    NR = np.size(R_array)
     pot = SM_potential(r=r_arr, R=R_arr)
     #print(pot.shape)
 
