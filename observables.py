@@ -1,16 +1,39 @@
 import numpy as np
 from numpy import matlib
 
-def get_adiabatic_pops(NR,Nr,dR,N_states,eigenstates,psi):
+
+def get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,psi):
     pops = np.zeros(N_states)
-    chi2_m = np.zeros(NR)
+
 
     for m in range(0,N_states):
-        for i in range(0,NR):
-            chi2_m[i] = np.abs(np.conj(eigenstates[i::Nr,m])*psi[i::Nr])**2 #We have to rebuild eigenstates
-        pops[m] = np.sum(chi2_m)*dR
+        flat_eigenstate = eigenstates[:,:,m].flatten("F")
+        flat_chi2_m = flat_eigenstate*psi
+        chi2_m = np.sum(flat_chi2_m.reshape(Nr,NR),0)*dr
+        pops[m] = np.sum(np.abs(chi2_m)**2)*dR
 
     return pops
+
+def get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,psi):
+    Dnm = np.zeros((N_states,N_states))
+
+
+    for m in range(0,N_states):
+        for n in range(m,N_states):
+            flat_eigenstate = eigenstates[:,:,m].flatten("F")
+            flat_chi2_m = flat_eigenstate*psi
+
+            flat_eigenstate = eigenstates[:,:,n].flatten("F")
+            flat_chi2_n = flat_eigenstate*psi
+
+            chi2_m = np.sum(flat_chi2_m.reshape(Nr,NR),0)*dr
+            chi2_n = np.sum(flat_chi2_n.reshape(Nr,NR),0)*dr
+
+            Dnm[n,m] = np.sum(np.abs(chi2_m)**2*np.abs(chi2_n)**2)*dR
+            Dnm[m,n] = Dnm[n,m]
+
+
+    return Dnm
 
 
 def get_reduced_nuclear_density(NR,Nr,dr,psi):

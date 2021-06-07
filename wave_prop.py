@@ -26,7 +26,9 @@ wave_p = wave_packet(x=R_array)
 wave = ex1.flatten(order="F")*matlib.repmat(wave_p,1,Nr).flatten()
 
 # wave = wave/(np.sqrt(np.sum(np.abs(wave)**2)*dr*dR))
-print(np.sum(np.abs(wave)**2)*dr*dR)
+print("Norm of initial wave:",np.sum(np.abs(wave)**2)*dr*dR)
+print("Adiabatic pops of initial wave:",obv.get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,wave))
+print("Deco. dynamics pops of initial wave:\n",obv.get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,wave))
 
 
 #endtime = 30/(2.418884e-2)
@@ -69,16 +71,16 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
 
 
 ## A: Some plots for testing different stuff
-plt.figure()
+# plt.figure()
 # plt.plot(np.abs(psi0)**2)
 # plt.plot(ex1[np.where(R_array==-4.)[0][0],:])
-plt.plot(R_array,obv.get_reduced_nuclear_density(NR,Nr,dr,wave),label="Reduced")
-plt.plot(R_array,np.abs(wave_packet(R_array))**2,label="Wave packet")
+# plt.plot(R_array,obv.get_reduced_nuclear_density(NR,Nr,dr,wave),label="Reduced")
+# plt.plot(R_array,np.abs(wave_packet(R_array))**2,label="Wave packet")
 # plt.plot(r_array,obv.get_reduced_electron_density(NR,Nr,dR,psi0))
 # plt.plot(r_array,np.abs(ex1[np.where(R_array==-4.)[0][0],:])**2)
 # plt.plot(R_array,nucleus_evolved[0,:])
 # plt.plot(R_array,nucleus_evolved[1,:])
-plt.legend()
-plt.show()
-plt.close()
+# plt.legend()
+# plt.show()
+# plt.close()
 
