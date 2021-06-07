@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import matlib
 
 def get_adiabatic_pops(NR,Nr,dR,N_states,eigenstates,psi):
     pops = np.zeros(N_states)

@@ -19,22 +19,13 @@ non_adiabatic = np.load("non_adiabatic_coupling.npy")
 eigenstates = np.load("eigenvstates.npy")
 eigenvalues = np.load("eigenvalues.npy")
 
-NR,Nr,N_states = eigenstates.shape
 ex1 = eigenstates[:,:,1]
-psi0 = np.zeros([Nr*NR],dtype=np.complex64)
-
-
-psi0 = np.outer(ex1[np.where(R_array==-4.)[0][0],:],wave_packet(R_array)).flatten()
 
 #### THIS IS THE PART OF THE NEWLY CONSTRUCTED WAVE
 wave_p = wave_packet(x=R_array)
-wave_p_vec = matlib.repmat(wave_p,1,Nr).T
-phi0 = ex1.flatten()*wave_p_vec
-wave = phi0.sum(axis=0)
+wave = ex1.flatten(order="F")*matlib.repmat(wave_p,1,Nr).flatten()
 
-#### IT IS NORMED FOR NOW SINCE THE EIGENSTATES ARE NOT
-## A: it seems that 
-wave = wave/(np.sqrt(np.sum(np.abs(wave)**2)*dr*dR))
+# wave = wave/(np.sqrt(np.sum(np.abs(wave)**2)*dr*dR))
 print(np.sum(np.abs(wave)**2)*dr*dR)
 
 
@@ -73,20 +64,21 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
 # full_hamiltonian_mat = fh.build_hamiltonian()
 # psi_evolved,nucleus_evolved = simulate(psi=psi0,hamiltonian=full_hamiltonian_mat,dt=1e-7,endtime=1e-5,snaps=10)
 
-with open("psi_evolved.npy","wb") as f:
-    np.save(f,psi_evolved)
+# with open("psi_evolved.npy","wb") as f:
+#     np.save(f,psi_evolved)
 
 
 ## A: Some plots for testing different stuff
-# plt.figure()
+plt.figure()
 # plt.plot(np.abs(psi0)**2)
 # plt.plot(ex1[np.where(R_array==-4.)[0][0],:])
-# plt.plot(R_array,obv.get_reduced_nuclear_density(NR,Nr,dr,psi0))
-# plt.plot(R_array,np.abs(wave_packet(R_array))**2)
+plt.plot(R_array,obv.get_reduced_nuclear_density(NR,Nr,dr,wave),label="Reduced")
+plt.plot(R_array,np.abs(wave_packet(R_array))**2,label="Wave packet")
 # plt.plot(r_array,obv.get_reduced_electron_density(NR,Nr,dR,psi0))
 # plt.plot(r_array,np.abs(ex1[np.where(R_array==-4.)[0][0],:])**2)
 # plt.plot(R_array,nucleus_evolved[0,:])
 # plt.plot(R_array,nucleus_evolved[1,:])
-# plt.show()
-# plt.close()
+plt.legend()
+plt.show()
+plt.close()
 
