@@ -110,7 +110,7 @@ def compute_eigen(Nr,NR,r_array,R_array):
     limit = 0.05
     for i in range(1, NR):
         for j in range(N_states):
-            aux = np.sum(eigenstates[i-1,:,j]*eigenstates[i,:,j])*dR
+            aux = np.sum(eigenstates[i-1,:,j]*eigenstates[i,:,j])*dr
             if aux<limit:
                 eigenstates[i,:,j]*=-1
     
