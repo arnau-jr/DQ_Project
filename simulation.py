@@ -39,7 +39,7 @@ if __name__== '__main__':
     print("Deco. dynamics pops of initial wave:\n",obv.get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,wave))
 
     full_hamiltonian_mat = fh.build_hamiltonian()
-    psi_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=10.,snaps=100)
+    psi_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=0.0001,snaps=1)
 
     print(psi_evolved.shape)
     
