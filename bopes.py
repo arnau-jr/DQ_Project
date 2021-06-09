@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.linalg.decomp import eig
 from parameters import *
 from scipy.special import erf
 from scipy.linalg import eigh_tridiagonal,eigh
@@ -105,6 +106,13 @@ def compute_eigen(Nr,NR,r_array,R_array):
         for j in range(0,N_states):
             eigenvalues[i,j] = W[j]
             eigenstates[i,:,j] = V[:,j]/np.sqrt(np.sum(np.abs(V[:,j])**2)*dr)
+
+    limit = 0.05
+    for i in range(1, NR):
+        for j in range(N_states):
+            aux = np.sum(eigenstates[i-1,:,j]*eigenstates[i,:,j])*dR
+            if aux<limit:
+                eigenstates[i,:,j]*=-1
     
     ## plot the BOPES when completed
     print("Plotting the BOPES and saving the image")

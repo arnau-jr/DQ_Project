@@ -26,8 +26,11 @@ if __name__== '__main__':
         ## loading the saved arrays from the bopes step
         eigenstates = np.load("eigenstates.npy")
 
+    plt.figure()
+    plt.imshow(eigenstates[:,:,1])
+    plt.show()
 
-    ex1 = eigenstates[:,:,1]
+    ex1 = eigenstates[:,:,0]
 
     #### THIS IS THE PART OF THE NEWLY CONSTRUCTED WAVE
     wave_p = wave_packet(x=R_array)
@@ -49,9 +52,7 @@ if __name__== '__main__':
     plt.close()
 
     full_hamiltonian_mat = fh.build_hamiltonian()
-    psi_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=1,snaps=1)
-
-    print(psi_evolved.shape)
+    psi_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=300,snaps=10)
     
     #Animation
     fig,ax = plt.subplots(1,1)

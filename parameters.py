@@ -18,3 +18,6 @@ NR = np.size(R_array)
 N_states = 3
 
 dt = 1e-1
+tmax = 30
+auTofs = 2.42e-2
+end = int(tmax/(dt*auTofs))
