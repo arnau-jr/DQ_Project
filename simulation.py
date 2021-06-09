@@ -48,7 +48,7 @@ if __name__== '__main__':
     plt.plot(R_array,obv.get_reduced_nuclear_density(NR,Nr,dr,wave),label="Reduced")
     plt.plot(R_array,np.abs(wave_packet(R_array))**2,label="Wave packet")
     plt.legend()
-    plt.savefig("initial_nuclear_density.png")
+    plt.savefig(r"pics\initial_nuclear_density.png")
     plt.close()
 
     full_hamiltonian_mat = fh.build_hamiltonian()
@@ -68,7 +68,7 @@ if __name__== '__main__':
 
     ani = animation.FuncAnimation(fig,animat,frames=nucleus_evolved.shape[0],interval=10.)
     writervideo = animation.FFMpegWriter(fps=60) 
-    ani.save("ani_nucleus.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
+    ani.save(r"pics\ani_nucleus.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
 
     #plt.show()
     plt.close()
@@ -87,7 +87,7 @@ if __name__== '__main__':
 
     ani = animation.FuncAnimation(fig,animat,frames=elec_evolved.shape[0],interval=10.)
     writervideo = animation.FFMpegWriter(fps=60) 
-    ani.save("ani_elec.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
+    ani.save(r"pics\ani_elec.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
 
     #plt.show()
     plt.close()

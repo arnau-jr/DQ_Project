@@ -47,8 +47,8 @@ for a in fig.axes[:-1]:
     a.set_xlabel('x', size=10)
     a.tick_params(labelsize=5)
 
-#plt.savefig("groundstate.png")
-#plt.savefig("first_excited.png")
-plt.savefig("second_excited.png")
+#plt.savefig(r"pics\groundstate.png")
+#plt.savefig(r"pics\first_excited.png")
+plt.savefig(r"pics\second_excited.png")
 
 
