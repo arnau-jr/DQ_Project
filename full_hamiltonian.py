@@ -22,23 +22,23 @@ def laplacian(dr,N):
     L = np.zeros((N,N))
     
     #Diagonal
-    L += (-205./72.)*-np.eye(N)/(2.*dr**2)
+    L += (-205./72.)*np.eye(N)/(dr**2)
 
     #First off diagonal
-    L += (8./5.)*-np.eye(N,k=1)/(2.*dr**2)
-    L += (8./5.)*-np.eye(N,k=-1)/(2.*dr**2)
+    L += (8./5.)*np.eye(N,k=1)/(dr**2)
+    L += (8./5.)*np.eye(N,k=-1)/(dr**2)
 
     #Second off diagonal
-    L += (-1./5.)*-np.eye(N,k=2)/(2.*dr**2)
-    L += (-1./5.)*-np.eye(N,k=-2)/(2.*dr**2)
+    L += (-1./5.)*np.eye(N,k=2)/(dr**2)
+    L += (-1./5.)*np.eye(N,k=-2)/(dr**2)
 
     #Third off diagonal
-    L += (8./315.)*-np.eye(N,k=3)/(2.*dr**2)
-    L += (8./315.)*-np.eye(N,k=-3)/(2.*dr**2)
+    L += (8./315.)*np.eye(N,k=3)/(dr**2)
+    L += (8./315.)*np.eye(N,k=-3)/(dr**2)
 
     #Fourth off diagonal
-    L += (-1./560.)*-np.eye(N,k=4)/(2.*dr**2)
-    L += (-1./560.)*-np.eye(N,k=-4)/(2.*dr**2)
+    L += (-1./560.)*np.eye(N,k=4)/(dr**2)
+    L += (-1./560.)*np.eye(N,k=-4)/(dr**2)
         
     return L
 
@@ -60,8 +60,8 @@ def build_hamiltonian():
     m = 1
     M = 1836.152673
 
-    Te = laplacian(dr,Nr)/(2*m)
-    Tp = laplacian(dR,NR)/(2*M)
+    Te = -laplacian(dr,Nr)/(2*m)
+    Tp = -laplacian(dR,NR)/(2*M)
 
     Te_full = sp.kron(Te,np.eye(NR))
     Tp_full = sp.kron(np.eye(Nr),Tp)
