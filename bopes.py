@@ -107,6 +107,8 @@ def compute_eigen(Nr,NR,r_array,R_array):
             eigenvalues[i,j] = W[j]
             eigenstates[i,:,j] = V[:,j]/np.sqrt(np.sum(np.abs(V[:,j])**2)*dr)
 
+
+    ## checking on the signs of the eigenstates
     limit = 0.05
     for i in range(1, NR):
         for j in range(N_states):
