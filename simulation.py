@@ -26,9 +26,9 @@ if __name__== '__main__':
         ## loading the saved arrays from the bopes step
         eigenstates = np.load("eigenstates.npy")
 
-    plt.figure()
-    plt.imshow(eigenstates[:,:,1])
-    plt.show()
+    #plt.figure()
+    #plt.imshow(eigenstates[:,:,1])
+    #plt.show()
 
     ex1 = eigenstates[:,:,1]
 
