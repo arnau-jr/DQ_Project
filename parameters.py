@@ -17,4 +17,4 @@ NR = np.size(R_array)
 
 N_states = 3
 
-dt = 1e-6
+dt = 1e-3
