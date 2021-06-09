@@ -127,7 +127,7 @@ def compute_eigen(Nr,NR,r_array,R_array):
     plt.plot(R_array,eigenvalues[:,1],label="First excited state")
     plt.plot(R_array,eigenvalues[:,2],label="Second excited state")
     plt.legend()
-    plt.savefig(r"pics\bopes.png")
+    plt.savefig("pics/bopes.png")
     plt.close()
     
     return eigenvalues,eigenstates

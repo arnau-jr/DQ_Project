@@ -49,6 +49,6 @@ for a in fig.axes[:-1]:
 
 #plt.savefig(r"pics\groundstate.png")
 #plt.savefig(r"pics\first_excited.png")
-plt.savefig(r"pics\second_excited.png")
+plt.savefig("pics/second_excited.png")
 
 

@@ -19,5 +19,6 @@ N_states = 3
 
 dt = 1e-1
 tmax = 30
-auTofs = 2.42e-2
-end = int(tmax/(dt*auTofs))
+auTofs = 2.4e-2
+#end = int(tmax/(dt*auTofs))
+end = 12500 ## so its a round number because it would be around 12499

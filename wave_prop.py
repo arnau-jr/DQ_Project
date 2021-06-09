@@ -26,17 +26,17 @@ def evolve_psi_RK4(dt,hamiltonian,wave):
     return wave + (dt/6.)*(k1 + 2.*k2 + 2.*k3 + k4)
 
 def simulate(psi,hamiltonian,dt,endtime,snaps):
-    time = np.arange(0,endtime,dt)
-    time_len = np.size(time)
-    print("Simulation time is: ",time_len)
+    time = np.linspace(0,endtime,endtime)
+    time_len = time.shape[0]
+    print("Simulation time is: ",endtime)
     psi_len = np.size(psi)
     psi_evolved = np.zeros((int(time_len/snaps), psi_len),dtype=np.complex64)
     nucleus_evolved = np.zeros((int(time_len/snaps),NR))
     elec_evolved = np.zeros((int(time_len/snaps),Nr))
 
     temp_psi = psi
-    for i in range(time_len-1):
-        print(i," of ",time_len,end='\r')
+    for i in range(time_len):
+        print(i," of ",time_len,end=' \r')
         temp_psi = evolve_psi_RK4(dt,hamiltonian,temp_psi)
         if i%snaps == 0:
             psi_evolved[int(i/snaps)] = temp_psi
