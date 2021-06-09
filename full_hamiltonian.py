@@ -3,48 +3,7 @@ import matplotlib.pyplot as plt
 from parameters import *
 from scipy import sparse as sp
 from scipy.special import erf
-
-def SM_potential(r,R,L=19.0,R_l=4.,R_r=3.1,R_f=5.):
-
-    """
-    Computation of the Shin-Metiu (SM) potential. The electron
-    is embedded in r-space and the moving ion is embedded in
-    R-space. Note the difference of lower and upper case 
-    notation of each. Each part of the function (f1,f2,f3,f4,f5) 
-    is representing one term of the potential. And for the cases
-    that the system would blow up, the limits of the functions
-    are used (f3,f4,f5).
-
-        Args:
-            r: 1D np.array, r-space vector
-            R: float number, specific point in R-space
-            L: float number, size of the system 
-            R_l: float number, parameter given for this regime
-            R_r: float number, parameter given for this regime
-            R_f: float number, parameter given for this regime
-
-        Returns:
-            SM: 1D np.array, SM-potential vector over r-space
-    """
-
-    f1 = 1./np.abs(L/2.-R)
-    f2 = 1./np.abs(L/2.+R)
-
-    f3 = np.where(np.abs(R-r)<1e-8,\
-          -2./(R_f*np.sqrt(np.pi)),\
-           -erf(np.abs(R-r)/R_f)/np.abs(R-r))
-
-    f4 = np.where(np.abs(r-L/2.)<1e-8,\
-        -2./(R_r*np.sqrt(np.pi)),\
-        -erf(np.abs(r-L/2.)/R_r)/np.abs(r-L/2.))
-
-    f5 = np.where(np.abs(r+L/2.)<1e-8,\
-        -2./(R_l*np.sqrt(np.pi)),\
-        -erf(np.abs(r+L/2.)/R_l)/np.abs(r+L/2.))
-
-    SM = f1+f2+f3+f4+f5
-
-    return SM
+from bopes import SM_potential
 
 def laplacian(dr,N):
 

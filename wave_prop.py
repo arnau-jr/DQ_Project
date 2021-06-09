@@ -14,25 +14,6 @@ def wave_packet(x,x0=-4.,sigma=1/np.sqrt(2.85)):
     """
     return np.cdouble(np.exp(-(x-x0)**2/(2*sigma**2))/np.sqrt(np.sqrt(np.pi)*sigma))
 
-## loading the saved arrays from the bopes step
-non_adiabatic = np.load("non_adiabatic_coupling.npy")
-eigenstates = np.load("eigenvstates.npy")
-eigenvalues = np.load("eigenvalues.npy")
-
-ex1 = eigenstates[:,:,1]
-
-#### THIS IS THE PART OF THE NEWLY CONSTRUCTED WAVE
-wave_p = wave_packet(x=R_array)
-wave = ex1.flatten(order="F")*matlib.repmat(wave_p,1,Nr).flatten()
-
-# wave = wave/(np.sqrt(np.sum(np.abs(wave)**2)*dr*dR))
-print("Norm of initial wave:",np.sum(np.abs(wave)**2)*dr*dR)
-print("Adiabatic pops of initial wave:",obv.get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,wave))
-print("Deco. dynamics pops of initial wave:\n",obv.get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,wave))
-
-
-#endtime = 30/(2.418884e-2)
-
 def compute_f(hamiltonian, wave):
     return -1j*hamiltonian.dot(wave)
 
@@ -47,7 +28,7 @@ def evolve_psi_RK4(dt,hamiltonian,wave):
 def simulate(psi,hamiltonian,dt,endtime,snaps):
     time = np.arange(0,endtime,dt)
     time_len = np.size(time)
-    print(time_len)
+    print("Simulation time is: ",time_len)
     psi_len = np.size(psi)
     psi_evolved = np.zeros((int(time_len/snaps), psi_len),dtype=np.complex64)
     nucleus_evolved = np.zeros((int(time_len/snaps),NR))
@@ -61,8 +42,6 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
     
     return psi_evolved,nucleus_evolved
 
-full_hamiltonian_mat = fh.build_hamiltonian()
-psi_evolved,nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=1.,snaps=10)
 
 # with open("psi_evolved.npy","wb") as f:
 #     np.save(f,psi_evolved)
@@ -81,23 +60,3 @@ psi_evolved,nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat
 # plt.legend()
 # plt.show()
 # plt.close()
-
-#Animation
-fig,ax = plt.subplots(1,1)
-
-ax.set_xlabel("R")
-ax.set_ylabel(r"$\rho_N(R)$")
-mod_line = ax.plot(R_array,nucleus_evolved[0,:])
-ax.legend([r"$\rho_N(R)$"])
-
-def animat(i):
-    mod_line[0].set_ydata(nucleus_evolved[i-1,:])
-    return mod_line
-
-ani = animation.FuncAnimation(fig,animat,frames=nucleus_evolved.shape[0],interval=10.)
-writervideo = animation.FFMpegWriter(fps=60) 
-ani.save("ani_nucleus.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
-
-plt.show()
-plt.close()
-

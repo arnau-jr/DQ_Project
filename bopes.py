@@ -91,38 +91,36 @@ def hamiltonian(dr,Nr,r_array,R):
 
 #Generation of the BOPEs
 
-N_states = 3 #How many BOPE states we want to save
+def compute_eigen(Nr,NR,r_array,R_array):
+    N_states = 3 #How many BOPE states we want to save
 
-eigenvalues = np.zeros([NR,N_states])
-eigenstates = np.zeros([NR,Nr,N_states])
+    eigenvalues = np.zeros([NR,N_states])
+    eigenstates = np.zeros([NR,Nr,N_states])
 
-print("Diagonalizing ",Nr," by ",Nr," matrices")
-for i in range(0,NR):
-    print(i," of ",NR,end='\r')
-    W,V = eigh(hamiltonian(dr,Nr,r_array,R_array[i]))
+    print("Diagonalizing ",Nr," by ",Nr," matrices")
+    for i in range(0,NR):
+        print(i," of ",NR,end='\r')
+        W,V = eigh(hamiltonian(dr,Nr,r_array,R_array[i]))
 
-    for j in range(0,N_states):
-        eigenvalues[i,j] = W[j]
-        eigenstates[i,:,j] = V[:,j]/np.sqrt(np.sum(np.abs(V[:,j])**2)*dr)
-
-
-with open("eigenvalues.npy","wb") as f:
-    np.save(f,eigenvalues)
-
-with open("eigenvstates.npy","wb") as f:
-    np.save(f,eigenstates)
-
-plt.xlabel(r"$R(a_0)$")
-plt.ylabel(r"$E(E_H)$")
-plt.xlim([-6,6])
-plt.ylim([-0.3,-0.1])
-plt.plot(R_array,eigenvalues[:,0],label="Ground state")
-plt.plot(R_array,eigenvalues[:,1],label="First excited state")
-plt.plot(R_array,eigenvalues[:,2],label="Second excited state")
-plt.legend()
-plt.savefig("bopes.png")
-plt.close()
-
+        for j in range(0,N_states):
+            eigenvalues[i,j] = W[j]
+            eigenstates[i,:,j] = V[:,j]/np.sqrt(np.sum(np.abs(V[:,j])**2)*dr)
+    
+    ## plot the BOPES when completed
+    print("Plotting the BOPES and saving the image")
+    
+    plt.xlabel(r"$R(a_0)$")
+    plt.ylabel(r"$E(E_H)$")
+    plt.xlim([-6,6])
+    plt.ylim([-0.3,-0.1])
+    plt.plot(R_array,eigenvalues[:,0],label="Ground state")
+    plt.plot(R_array,eigenvalues[:,1],label="First excited state")
+    plt.plot(R_array,eigenvalues[:,2],label="Second excited state")
+    plt.legend()
+    plt.savefig("bopes.png")
+    plt.close()
+    
+    return eigenvalues,eigenstates
 
 #Computing Non-Adiabatic couplings
 
@@ -163,7 +161,7 @@ def get_nonadiabatic_couplings(NR,dr,N_states,eigenstates,M=1836.152673):
 
     return S
 
-S = get_nonadiabatic_couplings(NR,dr,N_states,eigenstates)
+#S = get_nonadiabatic_couplings(NR,dr,N_states,estates)
 
-with open("non_adiabatic_coupling.npy","wb") as f:
-    np.save(f,S)
+#with open("non_adiabatic_coupling.npy","wb") as f:
+#    np.save(f,S)
