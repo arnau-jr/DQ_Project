@@ -100,7 +100,7 @@ def compute_eigen(Nr,NR,r_array,R_array):
     print("Diagonalizing ",Nr," by ",Nr," matrices")
     for i in range(0,NR):
         print(i," of ",NR,end='\r')
-        W,V = eigh(hamiltonian(dr,Nr,r_array,R_array[i]))
+        W,V = eigh(hamiltonian(dr,Nr,r_array,R_array[i]),subset_by_index=(0,N_states-1))
 
         for j in range(0,N_states):
             eigenvalues[i,j] = W[j]
