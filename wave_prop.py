@@ -43,7 +43,7 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
             nucleus_evolved[int(i/snaps),:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
             elec_evolved[int(i/snaps),:] = obv.get_reduced_electron_density(NR,Nr,dR,temp_psi)
             norm_nuc = np.sum(np.abs(nucleus_evolved[int(i/snaps)])**2)*dR
-            norm_elec = np.sum(np.abs(elec_evolved[int(i/snaps)])**2)*dR
+            norm_elec = np.sum(np.abs(elec_evolved[int(i/snaps)])**2)*dr
             print("The norm of the nuc_wave is: ", norm_nuc)
             print("The norm of the eelc_wave is: ", norm_elec)
 
