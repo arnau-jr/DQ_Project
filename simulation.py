@@ -38,8 +38,18 @@ if __name__== '__main__':
     print("Adiabatic pops of initial wave:",obv.get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,wave))
     print("Deco. dynamics pops of initial wave:\n",obv.get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,wave))
 
+    plt.figure()
+    plt.xlabel(r"$R(a_0)$")
+    plt.ylabel(r"$\rho_N (R)$")
+    plt.xlim([-9,9])
+    plt.plot(R_array,obv.get_reduced_nuclear_density(NR,Nr,dr,wave),label="Reduced")
+    plt.plot(R_array,np.abs(wave_packet(R_array))**2,label="Wave packet")
+    plt.legend()
+    plt.savefig("initial_nuclear_density.png")
+    plt.close()
+
     full_hamiltonian_mat = fh.build_hamiltonian()
-    psi_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=0.1,snaps=1)
+    psi_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=1,snaps=1)
 
     print(psi_evolved.shape)
     
