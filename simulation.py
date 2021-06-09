@@ -30,7 +30,7 @@ if __name__== '__main__':
     plt.imshow(eigenstates[:,:,1])
     plt.show()
 
-    ex1 = eigenstates[:,:,0]
+    ex1 = eigenstates[:,:,1]
 
     #### THIS IS THE PART OF THE NEWLY CONSTRUCTED WAVE
     wave_p = wave_packet(x=R_array)
