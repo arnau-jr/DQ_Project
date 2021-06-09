@@ -52,9 +52,9 @@ if __name__== '__main__':
     plt.close()
 
     full_hamiltonian_mat = fh.build_hamiltonian()
-    psi_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=300,snaps=10)
+    elec_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=300,snaps=10)
     
-    #Animation
+    #Animation nucleus
     fig,ax = plt.subplots(1,1)
 
     ax.set_xlabel("R")
@@ -69,6 +69,25 @@ if __name__== '__main__':
     ani = animation.FuncAnimation(fig,animat,frames=nucleus_evolved.shape[0],interval=10.)
     writervideo = animation.FFMpegWriter(fps=60) 
     ani.save("ani_nucleus.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
+
+    plt.show()
+    plt.close()
+
+    #Animation electron
+    fig,ax = plt.subplots(1,1)
+
+    ax.set_xlabel("R")
+    ax.set_ylabel(r"$\rho_N(r)$")
+    mod_line = ax.plot(r_array,elec_evolved[0,:])
+    ax.legend([r"$\rho_N(r)$"])
+
+    def animat(i):
+        mod_line[0].set_ydata(elec_evolved[i-1,:])
+        return mod_line
+
+    ani = animation.FuncAnimation(fig,animat,frames=elec_evolved.shape[0],interval=10.)
+    writervideo = animation.FFMpegWriter(fps=60) 
+    ani.save("ani_elec.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
 
     plt.show()
     plt.close()

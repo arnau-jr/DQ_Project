@@ -32,6 +32,8 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
     psi_len = np.size(psi)
     psi_evolved = np.zeros((int(time_len/snaps), psi_len),dtype=np.complex64)
     nucleus_evolved = np.zeros((int(time_len/snaps),NR))
+    elec_evolved = np.zeros((int(time_len/snaps),Nr))
+
     temp_psi = psi
     for i in range(time_len-1):
         print(i," of ",time_len,end='\r')
@@ -39,10 +41,11 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
         if i%snaps == 0:
             psi_evolved[int(i/snaps)] = temp_psi
             nucleus_evolved[int(i/snaps),:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
+            elec_evolved[int(i/snaps),:] = obv.get_reduced_electron_density(NR,Nr,dR,temp_psi)
             norm_nuc = np.sum(np.abs(nucleus_evolved[int(i/snaps)])**2)*dR
-            print("The norm of the nuc_wave is: ", norm_nuc)
+            #print("The norm of the nuc_wave is: ", norm_nuc)
 
-    return psi_evolved,nucleus_evolved
+    return elec_evolved,nucleus_evolved
 
 
 # with open("psi_evolved.npy","wb") as f:
