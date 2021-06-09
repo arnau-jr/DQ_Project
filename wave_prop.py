@@ -39,8 +39,8 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
         if i%snaps == 0:
             psi_evolved[int(i/snaps)] = temp_psi
             nucleus_evolved[int(i/snaps),:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
-            norm = np.sum(np.abs(nucleus_evolved[int(i/snaps)])**2)*dR
-            print("The norm is: ", norm)
+            norm_nuc = np.sum(np.abs(nucleus_evolved[int(i/snaps)])**2)*dR
+            print("The norm of the nuc_wave is: ", norm_nuc)
 
     return psi_evolved,nucleus_evolved
 
