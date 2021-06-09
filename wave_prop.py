@@ -45,7 +45,7 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
             norm_nuc = np.sum(np.abs(nucleus_evolved[int(i/snaps)])**2)*dR
             norm_elec = np.sum(np.abs(elec_evolved[int(i/snaps)])**2)*dr
             print("The norm of the nuc_wave is: ", norm_nuc)
-            print("The norm of the eelc_wave is: ", norm_elec)
+            print("The norm of the elc_wave is: ", norm_elec)
 
     return elec_evolved,nucleus_evolved
 

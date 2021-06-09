@@ -52,7 +52,7 @@ if __name__== '__main__':
     plt.close()
 
     full_hamiltonian_mat = fh.build_hamiltonian()
-    elec_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=end,snaps=100)
+    elec_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=end,snaps=10)
     
     #Animation nucleus
     fig,ax = plt.subplots(1,1)
@@ -76,7 +76,7 @@ if __name__== '__main__':
     #Animation electron
     fig,ax = plt.subplots(1,1)
 
-    ax.set_xlabel("R")
+    ax.set_xlabel("r")
     ax.set_ylabel(r"$\rho_N(r)$")
     mod_line = ax.plot(r_array,elec_evolved[0,:])
     ax.legend([r"$\rho_N(r)$"])

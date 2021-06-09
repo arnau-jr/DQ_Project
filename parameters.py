@@ -20,5 +20,4 @@ N_states = 3
 dt = 1e-1
 tmax = 30
 auTofs = 2.4e-2
-#end = int(tmax/(dt*auTofs))
-end = 12500 ## so its a round number because it would be around 12499
+end = int(np.rint(tmax/(dt*auTofs))) ## looks a bit weird, but returns 12500 otherwise it would return 12499
