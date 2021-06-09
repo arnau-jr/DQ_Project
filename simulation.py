@@ -70,7 +70,7 @@ if __name__== '__main__':
     writervideo = animation.FFMpegWriter(fps=60) 
     ani.save("ani_nucleus.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
 
-    plt.show()
+    #plt.show()
     plt.close()
 
     #Animation electron
@@ -89,6 +89,6 @@ if __name__== '__main__':
     writervideo = animation.FFMpegWriter(fps=60) 
     ani.save("ani_elec.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
 
-    plt.show()
+    #plt.show()
     plt.close()
     
