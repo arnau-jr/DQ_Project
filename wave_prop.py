@@ -51,7 +51,7 @@ def evolve_psi_RK4(dt,hamiltonian,wave):
     k4 = compute_f(hamiltonian,wave +  dt*k3    )
     return wave + (dt/6.)*(k1 + 2.*k2 + 2.*k3 + k4)
 
-def simulate(psi,hamiltonian,dt,endtime,snaps):
+def simulate(psi,hamiltonian,eigenstates,dt,endtime,snaps):
 
     """
     Simulation of the wave packet is happening here in the code. The time array, the wave packet,
@@ -59,6 +59,7 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
     Args:
         psi: 1D np.array, wave packet with shape NR*Nr
         hamiltonian: 2D np.array, full hamiltonian for the system (electron-nuclei-hamiltonian)
+        eigenstates: (NR,Nr,N_states) np.array, used for computing adiabiatic populations 
         dt: int number, discretization time step
         endtime: int number, length of the simulation 
         snaps: int number, number of snapshots taken of the simulation
@@ -76,11 +77,13 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
     psi_evolved = np.zeros((int(time_len/snaps), psi_len),dtype=np.complex64)
     nucleus_evolved = np.zeros((int(time_len/snaps),NR))
     elec_evolved = np.zeros((int(time_len/snaps),Nr))
+    pops_evolved = np.zeros((int(time_len/snaps),N_states))
 
     temp_psi = psi
     psi_evolved[0] = temp_psi
     nucleus_evolved[0,:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
     elec_evolved[0,:] = obv.get_reduced_electron_density(NR,Nr,dR,temp_psi)
+    pops_evolved[0,:] = obv.get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,temp_psi)
     norm_nuc = np.sum(nucleus_evolved[0])*dR
     norm_elec = np.sum(elec_evolved[0])*dr
     norm_psi = np.sum(np.abs(temp_psi)**2)*dr*dR
@@ -97,6 +100,7 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
             psi_evolved[int(i/snaps)] = temp_psi
             nucleus_evolved[int(i/snaps),:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
             elec_evolved[int(i/snaps),:] = obv.get_reduced_electron_density(NR,Nr,dR,temp_psi)
+            pops_evolved[int(i/snaps),:] = obv.get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,temp_psi)
             norm_nuc = np.sum(nucleus_evolved[int(i/snaps)])*dR
             norm_elec = np.sum(elec_evolved[int(i/snaps)])*dr
             norm_psi = np.sum(np.abs(temp_psi)**2)*dr*dR
@@ -104,7 +108,7 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
             # print("The norm of the elc_wave is: ", norm_elec)
             f_norm.write(str(i*dt) + " " + str(norm_nuc) + " " + str(norm_elec) + " " + str(norm_psi) +"\n")
     f_norm.close()
-    return elec_evolved,nucleus_evolved
+    return elec_evolved,nucleus_evolved,pops_evolved
 
 
 # with open("psi_evolved.npy","wb") as f:

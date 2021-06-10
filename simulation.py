@@ -64,7 +64,7 @@ if __name__== '__main__':
     plt.close()
 
     full_hamiltonian_mat = fh.build_hamiltonian()
-    elec_evolved, nucleus_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,dt=dt,endtime=end,snaps=10)
+    elec_evolved, nucleus_evolved, pops_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,eigenstates=eigenstates,dt=dt,endtime=end,snaps=10)
     
     #Animation nucleus
     fig,ax = plt.subplots(1,1)
@@ -103,4 +103,17 @@ if __name__== '__main__':
 
     #plt.show()
     plt.close()
-    
+
+
+
+    plt.figure()
+    plt.xlabel(r"$t(fs)$")
+    plt.ylabel(r"$P_m$")
+    plt.xlim([0,30])
+    plt.plot(np.arange(0,tmax,dt*auTofs*10),pops_evolved[:,0],label="Ground state")
+    plt.plot(np.arange(0,tmax,dt*auTofs*10),pops_evolved[:,1],label="First excited state")
+    plt.plot(np.arange(0,tmax,dt*auTofs*10),pops_evolved[:,2],label="Second excited state")
+    plt.plot(np.arange(0,tmax,dt*auTofs*10),np.sum(pops_evolved,axis=-1),label="Total population")
+    plt.legend()
+    plt.savefig("pics/adiabatic_populations.png")
+    plt.close()
