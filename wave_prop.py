@@ -78,6 +78,18 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
     elec_evolved = np.zeros((int(time_len/snaps),Nr))
 
     temp_psi = psi
+    psi_evolved[0] = temp_psi
+    nucleus_evolved[0,:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
+    elec_evolved[0,:] = obv.get_reduced_electron_density(NR,Nr,dR,temp_psi)
+    norm_nuc = np.sum(nucleus_evolved[0])*dR
+    norm_elec = np.sum(elec_evolved[0])*dr
+    norm_psi = np.sum(np.abs(temp_psi)**2)*dr*dR
+    
+
+    f_norm = open("norms.dat","w") #File for norms
+    f_norm.write("t "+" Nuclear norm "+" Electron norm "+" Total norm \n")
+    f_norm.write(str(0.0) + " " + str(norm_nuc) + " " + str(norm_elec) + " " + str(norm_psi) +"\n")
+
     for i in range(time_len):
         print(i," of ",time_len,end=' \r')
         temp_psi = evolve_psi_RK4(dt,hamiltonian,temp_psi)
@@ -85,11 +97,13 @@ def simulate(psi,hamiltonian,dt,endtime,snaps):
             psi_evolved[int(i/snaps)] = temp_psi
             nucleus_evolved[int(i/snaps),:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
             elec_evolved[int(i/snaps),:] = obv.get_reduced_electron_density(NR,Nr,dR,temp_psi)
-            norm_nuc = np.sum(np.abs(nucleus_evolved[int(i/snaps)])**2)*dR
-            norm_elec = np.sum(np.abs(elec_evolved[int(i/snaps)])**2)*dr
-            print("The norm of the nuc_wave is: ", norm_nuc)
-            print("The norm of the elc_wave is: ", norm_elec)
-
+            norm_nuc = np.sum(nucleus_evolved[int(i/snaps)])*dR
+            norm_elec = np.sum(elec_evolved[int(i/snaps)])*dr
+            norm_psi = np.sum(np.abs(temp_psi)**2)*dr*dR
+            # print("The norm of the nuc_wave is: ", norm_nuc)
+            # print("The norm of the elc_wave is: ", norm_elec)
+            f_norm.write(str(i*dt) + " " + str(norm_nuc) + " " + str(norm_elec) + " " + str(norm_psi) +"\n")
+    f_norm.close()
     return elec_evolved,nucleus_evolved
 
 

@@ -38,6 +38,8 @@ if __name__== '__main__':
 
     # wave = wave/(np.sqrt(np.sum(np.abs(wave)**2)*dr*dR))
     print("Norm of initial wave:",np.sum(np.abs(wave)**2)*dr*dR)
+    print("Norm of initial nuclear density:",np.sum(obv.get_reduced_nuclear_density(NR,Nr,dr,wave))*dR)
+    print("Norm of initial electronic density:",np.sum(obv.get_reduced_electron_density(NR,Nr,dR,wave))*dr)
     print("Adiabatic pops of initial wave:",obv.get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,wave))
     print("Deco. dynamics pops of initial wave:\n",obv.get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,wave))
 
@@ -49,6 +51,16 @@ if __name__== '__main__':
     plt.plot(R_array,np.abs(wave_packet(R_array))**2,label="Wave packet")
     plt.legend()
     plt.savefig("pics/initial_nuclear_density.png")
+    plt.close()
+
+    plt.figure()
+    plt.xlabel(r"$r(a_0)$")
+    plt.ylabel(r"$\rho_e (r)$")
+    plt.xlim([-9,9])
+    plt.plot(r_array,obv.get_reduced_electron_density(NR,Nr,dR,wave),label="Reduced")
+    # plt.plot(r_array,np.abs(ex1)**2,label="First excited eigenstate")
+    plt.legend()
+    plt.savefig("pics/initial_electron_density.png")
     plt.close()
 
     full_hamiltonian_mat = fh.build_hamiltonian()
