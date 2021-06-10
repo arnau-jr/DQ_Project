@@ -13,7 +13,7 @@ if __name__== '__main__':
     print("Should the eigenstates and eigenvalues be recalculated? (y/n) \n")
     answer = input()
     if answer.lower()=="y":
-        eigenvalues, eigenstates = compute_eigen(Nr,NR,r_array,R_array)
+        eigenvalues, eigenstates = compute_eigen(Nr,NR,r_array,R_array,N_states)
 
         with open("eigenvalues.npy","wb") as f:
             np.save(f,eigenvalues)

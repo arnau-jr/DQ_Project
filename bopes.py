@@ -92,7 +92,25 @@ def hamiltonian(dr,Nr,r_array,R):
 
 #Generation of the BOPEs
 
-def compute_eigen(Nr,NR,r_array,R_array):
+def compute_eigen(Nr,NR,r_array,R_array,N_states):
+
+    """
+        Args: 
+            Nr: int number, length of the r-space (electron)
+            NR: int number, length of the R-space (nuclei)
+            r_array: 1D np.array, discretized r-space vector
+            R_array: 1D np.array, discretized R-space vector
+        
+        Returns:
+            eigenvalues: 2D np.array, eigenvalues of computed electronic hamiltonian matrix
+                         with first value being the in R-space component and the second one
+                         being the eigenstates
+
+            eigenstates: 3D np.array, eigenstates of computed electronic hamiltonian matrix
+                         with the first value being the r-space component, the second the 
+                         R-space component and the third being the number of eigenstate
+    """
+
     N_states = 3 #How many BOPE states we want to save
 
     eigenvalues = np.zeros([NR,N_states])

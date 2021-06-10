@@ -8,17 +8,43 @@ from numpy import matlib
 
 def wave_packet(x,x0=-4.,sigma=1/np.sqrt(2.85)):
     """
-    Initializing the Gaussian wavepacket around x0 = -4 and with sigma = 1/sqrt(2.85) at the ground state
-    of the system. Instead of splitting the function in real and imaginary part, the wavepacket 
-    is initialized with both parts by multiplying with np.exp(1j+1).
+    Initializing the Gaussian wavepacket around x0 = -4 and with sigma = 1/sqrt(2.85).
+    The wave is computed into imaginary space by np.cdouble, in order to avoid splitting
+    the wave packet later into real and imaginary part.
+        Args: 
+            x: 1D np.array, discretized space vector
+
+        Returns: 
+            double complex 1D np.array, wave over 
     """
     return np.cdouble(np.exp(-(x-x0)**2/(2*sigma**2))/np.sqrt(np.sqrt(np.pi)*sigma))
 
 def compute_f(hamiltonian, wave):
+    """
+        Matrix multiplication part of the Fourth order Runge Kutta Method.
+        Args: 
+            hamiltonian: 2D np.array, full hamiltonian computed for the system (electron-nuclei)
+                         can be a normal matrix or a sparse one with the dimensions NR*Nr
+            wave: 1D np.array, computed wavepacket over the space NR*Nr
+
+        Returns: 
+            complex matrix product of the hamiltonian with the wave
+    """
+
     return -1j*hamiltonian.dot(wave)
 
 def evolve_psi_RK4(dt,hamiltonian,wave):
+    """
+        Fourth order Runge-Kutta Method to propagate a wave in space and time.
+        Args: 
+            dt: int number, discretization step in time
+            hamiltonian: 2D np.array, full hamiltonian computed for the system (electron-nuclei)
+                         can be a normal matrix or a sparse one with the dimensions NR*Nr
+            wave: 1D np.array, computed wavepacket over the space NR*Nr
 
+        Returns:
+            wave: 1D np.array, with the dimension NR*Nr that is propagated through time and space
+    """
     k1 = compute_f(hamiltonian,wave)
     k2 = compute_f(hamiltonian,wave + (dt/2.)*k1)
     k3 = compute_f(hamiltonian,wave + (dt/2.)*k2)
@@ -26,6 +52,23 @@ def evolve_psi_RK4(dt,hamiltonian,wave):
     return wave + (dt/6.)*(k1 + 2.*k2 + 2.*k3 + k4)
 
 def simulate(psi,hamiltonian,dt,endtime,snaps):
+
+    """
+    Simulation of the wave packet is happening here in the code. The time array, the wave packet,
+    and the np.arrays for the propagated nucleus and electron are intialised and propagated.
+    Args:
+        psi: 1D np.array, wave packet with shape NR*Nr
+        hamiltonian: 2D np.array, full hamiltonian for the system (electron-nuclei-hamiltonian)
+        dt: int number, discretization time step
+        endtime: int number, length of the simulation 
+        snaps: int number, number of snapshots taken of the simulation
+
+    Returns: 
+        elec_evolved: 2D np.array, evolved electronic wave through space and time with dimensions [endtime, Nr]
+        nucleus_evolved: 2D np.array, evolved nucleus wave through space and time with dimensions [endtime, NR]
+
+    """
+
     time = np.linspace(0,endtime,endtime)
     time_len = time.shape[0]
     print("Simulation time is: ",endtime)
