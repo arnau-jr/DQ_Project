@@ -114,7 +114,7 @@ if __name__== '__main__':
     ax[0].legend([r"$\rho_N(R)$"])
 
 
-    ax[1].set_xlabel(r"$t (\text{fs})$")
+    ax[1].set_xlabel(r"$t (fs)$")
     ax[1].set_ylabel(r"$P_m (t)$")
     pop1_line = ax[1].plot(t_snaps_array[0],pops_evolved[0,0])
     pop2_line = ax[1].plot(t_snaps_array[0],pops_evolved[0,1])
@@ -136,7 +136,7 @@ if __name__== '__main__':
 
 
     plt.figure()
-    plt.xlabel(r"$t (\text{fs})$")
+    plt.xlabel(r"$t (fs}$")
     plt.ylabel(r"$P_m (t)$")
     plt.xlim([0,30])
     plt.plot(t_snaps_array,pops_evolved[:,0],label="Ground state")
@@ -149,7 +149,7 @@ if __name__== '__main__':
 
 
     plt.figure()
-    plt.xlabel(r"$t (\text{fs})$")
+    plt.xlabel(r"$t (fs)$")
     plt.ylabel(r"$D_{12} (t)$")
     plt.xlim([0,30])
     plt.plot(t_snaps_array,deco_evolved[:,0,1])

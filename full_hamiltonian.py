@@ -51,11 +51,10 @@ def build_hamiltonian():
     pot = SM_potential(r=r_arr, R=R_arr)
 
     cont2d = plt.contourf(pot,cmap="jet")
-    plt.ylabel("R")
-    plt.xlabel("r")
+    plt.ylabel(r"R($a_0$)")
+    plt.xlabel(r"r($a_0$)")
     plt.colorbar(cont2d)
     plt.savefig("pics/full_potential.png")
-
 
     ## reshape the potential vector and transfrom into N*N matrix
     N = Nr*NR
