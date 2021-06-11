@@ -118,6 +118,7 @@ if __name__== '__main__':
     ax[1].set_ylabel(r"$P_m (t)$")
     pop1_line = ax[1].plot(t_snaps_array[0],pops_evolved[0,0])
     pop2_line = ax[1].plot(t_snaps_array[0],pops_evolved[0,1])
+    ax[1].set_xlim([0,30])
     ax[1].legend([r"$P_1 (t)$",r"$P_2 (t)$"])
 
     def animat(i):
