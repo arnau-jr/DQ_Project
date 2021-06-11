@@ -64,7 +64,8 @@ if __name__== '__main__':
     plt.close()
 
     full_hamiltonian_mat = fh.build_hamiltonian()
-    elec_evolved, nucleus_evolved, pops_evolved = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,eigenstates=eigenstates,dt=dt,endtime=end,snaps=10)
+    elec_evolved, nucleus_evolved, pops_evolved,deco_evolved \
+        = simulate(psi=wave,hamiltonian=full_hamiltonian_mat,eigenstates=eigenstates,dt=dt,endtime=end,snaps=snaps)
     
     #Animation nucleus
     fig,ax = plt.subplots(1,1)
@@ -91,7 +92,7 @@ if __name__== '__main__':
     ax.set_xlabel("r")
     ax.set_ylabel(r"$\rho_N(r)$")
     mod_line = ax.plot(r_array,elec_evolved[0,:])
-    ax.legend([r"$\rho_N(r)$"])
+    ax.legend([r"$\rho_e(r)$"])
 
     def animat(i):
         mod_line[0].set_ydata(elec_evolved[i-1,:])
@@ -104,16 +105,53 @@ if __name__== '__main__':
     #plt.show()
     plt.close()
 
+   #Animation nuclear + pops
+    fig,ax = plt.subplots(2,1)
+
+    ax[0].set_xlabel("R")
+    ax[0].set_ylabel(r"$\rho_N(R)$")
+    mod_line = ax[0].plot(R_array,nucleus_evolved[0,:])
+    ax[0].legend([r"$\rho_N(R)$"])
+
+
+    ax[1].set_xlabel(r"$t (\text{fs})$")
+    ax[1].set_ylabel(r"$P_m (t)$")
+    pop1_line = ax[1].plot(t_snaps_array[0],pops_evolved[0,0])
+    pop2_line = ax[1].plot(t_snaps_array[0],pops_evolved[0,1])
+    ax[1].legend([r"$P_1 (t)$",r"$P_2 (t)$"])
+
+    def animat(i):
+        mod_line[0].set_ydata(nucleus_evolved[i-1,:])
+
+        pop1_line[0].set_data(t_snaps_array[:i],pops_evolved[:i,0])
+        pop2_line[0].set_data(t_snaps_array[:i],pops_evolved[:i,1])
+        return mod_line,pop1_line,pop2_line
+
+    ani = animation.FuncAnimation(fig,animat,frames=nucleus_evolved.shape[0],interval=10.)
+    writervideo = animation.FFMpegWriter(fps=60) 
+    ani.save("pics/ani_pops_nuc.mp4", writer=writervideo,progress_callback =lambda i, n: print(f"Saving frame {i} of {n}",end="\r"))
+
+    #plt.show()
+    plt.close()
 
 
     plt.figure()
-    plt.xlabel(r"$t(fs)$")
-    plt.ylabel(r"$P_m$")
+    plt.xlabel(r"$t (\text{fs})$")
+    plt.ylabel(r"$P_m (t)$")
     plt.xlim([0,30])
-    plt.plot(np.arange(0,tmax,dt*auTofs*10),pops_evolved[:,0],label="Ground state")
-    plt.plot(np.arange(0,tmax,dt*auTofs*10),pops_evolved[:,1],label="First excited state")
-    plt.plot(np.arange(0,tmax,dt*auTofs*10),pops_evolved[:,2],label="Second excited state")
-    plt.plot(np.arange(0,tmax,dt*auTofs*10),np.sum(pops_evolved,axis=-1),label="Total population")
+    plt.plot(t_snaps_array,pops_evolved[:,0],label="Ground state")
+    plt.plot(t_snaps_array,pops_evolved[:,1],label="First excited state")
+    plt.plot(t_snaps_array,pops_evolved[:,2],label="Second excited state")
+    plt.plot(t_snaps_array,np.sum(pops_evolved,axis=-1),label="Total population")
     plt.legend()
     plt.savefig("pics/adiabatic_populations.png")
+    plt.close()
+
+
+    plt.figure()
+    plt.xlabel(r"$t (\text{fs})$")
+    plt.ylabel(r"$D_{12} (t)$")
+    plt.xlim([0,30])
+    plt.plot(t_snaps_array,deco_evolved[:,0,1])
+    plt.savefig("pics/D12.png")
     plt.close()

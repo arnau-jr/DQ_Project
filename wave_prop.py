@@ -78,12 +78,14 @@ def simulate(psi,hamiltonian,eigenstates,dt,endtime,snaps):
     nucleus_evolved = np.zeros((int(time_len/snaps),NR))
     elec_evolved = np.zeros((int(time_len/snaps),Nr))
     pops_evolved = np.zeros((int(time_len/snaps),N_states))
+    deco_evolved = np.zeros((int(time_len/snaps),N_states,N_states))
 
     temp_psi = psi
     psi_evolved[0] = temp_psi
     nucleus_evolved[0,:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
     elec_evolved[0,:] = obv.get_reduced_electron_density(NR,Nr,dR,temp_psi)
     pops_evolved[0,:] = obv.get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,temp_psi)
+    deco_evolved[0,:] = obv.get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,temp_psi)
     norm_nuc = np.sum(nucleus_evolved[0])*dR
     norm_elec = np.sum(elec_evolved[0])*dr
     norm_psi = np.sum(np.abs(temp_psi)**2)*dr*dR
@@ -101,14 +103,15 @@ def simulate(psi,hamiltonian,eigenstates,dt,endtime,snaps):
             nucleus_evolved[int(i/snaps),:] = obv.get_reduced_nuclear_density(NR,Nr,dr,temp_psi)
             elec_evolved[int(i/snaps),:] = obv.get_reduced_electron_density(NR,Nr,dR,temp_psi)
             pops_evolved[int(i/snaps),:] = obv.get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,temp_psi)
+            deco_evolved[int(i/snaps),:] = obv.get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,temp_psi)
+            
             norm_nuc = np.sum(nucleus_evolved[int(i/snaps)])*dR
             norm_elec = np.sum(elec_evolved[int(i/snaps)])*dr
             norm_psi = np.sum(np.abs(temp_psi)**2)*dr*dR
-            # print("The norm of the nuc_wave is: ", norm_nuc)
-            # print("The norm of the elc_wave is: ", norm_elec)
+
             f_norm.write(str(i*dt) + " " + str(norm_nuc) + " " + str(norm_elec) + " " + str(norm_psi) +"\n")
     f_norm.close()
-    return elec_evolved,nucleus_evolved,pops_evolved
+    return elec_evolved,nucleus_evolved,pops_evolved,deco_evolved
 
 
 # with open("psi_evolved.npy","wb") as f:

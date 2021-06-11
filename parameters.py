@@ -20,4 +20,7 @@ N_states = 3
 dt = 1e-1
 tmax = 30
 auTofs = 2.4e-2
+snaps = 10
+t_array = np.arange(0,tmax,dt*auTofs)
+t_snaps_array = np.arange(0,tmax,dt*auTofs*snaps)
 end = int(np.rint(tmax/(dt*auTofs))) ## looks a bit weird, but returns 12500 otherwise it would return 12499
