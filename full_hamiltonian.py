@@ -50,6 +50,13 @@ def build_hamiltonian():
     r_arr, R_arr = np.meshgrid(r_array, R_array)
     pot = SM_potential(r=r_arr, R=R_arr)
 
+    cont2d = plt.contourf(pot,cmap="jet")
+    plt.ylabel("R")
+    plt.xlabel("r")
+    plt.colorbar(cont2d)
+    plt.savefig("pics/full_potential.png")
+
+
     ## reshape the potential vector and transfrom into N*N matrix
     N = Nr*NR
     pot_new = pot.reshape(N,order="F")
