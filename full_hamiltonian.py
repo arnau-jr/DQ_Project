@@ -49,11 +49,10 @@ def build_hamiltonian():
     ## without the same size
     r_arr, R_arr = np.meshgrid(r_array, R_array)
     pot = SM_potential(r=r_arr, R=R_arr)
-    #print(pot.shape)
 
     ## reshape the potential vector and transfrom into N*N matrix
     N = Nr*NR
-    pot_new = pot.reshape(N)
+    pot_new = pot.reshape(N,order="F")
 
     ## compute laplacian for the kinetic parts and put the into the same space
     ## with the kronecker product
