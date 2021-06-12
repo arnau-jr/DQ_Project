@@ -50,7 +50,7 @@ def build_hamiltonian():
     r_arr, R_arr = np.meshgrid(r_array, R_array)
     pot = SM_potential(r=r_arr, R=R_arr)
 
-    cont2d = plt.contourf(pot,cmap="jet")
+    cont2d = plt.contourf(r_array,R_array,pot,cmap="jet")
     plt.ylabel(r"R($a_0$)")
     plt.xlabel(r"r($a_0$)")
     plt.colorbar(cont2d)
