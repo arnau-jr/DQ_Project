@@ -43,9 +43,17 @@ plt.colorbar(cont_2d)  # Plots the colorbar for 2d contour diagram
 
 # Loop over both axes to label them and adjust the tick sizes
 for a in fig.axes[:-1]:
-    a.set_ylabel('R', size=10)
-    a.set_xlabel('r', size=10)
+    a.set_ylabel(r'R($a_0$)', size=10)
+    a.set_xlabel(r'r($a_0$)', size=10)
     a.tick_params(labelsize=5)
+
+ax_3d.set_zlabel('energy [a.u.]', size = 10)
+
+#fig.suptitle("Ground state")
+#fig.suptitle("First excited state")
+fig.suptitle("Second excited state")
+
+
 
 #plt.savefig("pics/groundstate.png")
 #plt.savefig("pics/first_excited.png")
