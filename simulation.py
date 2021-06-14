@@ -73,7 +73,7 @@ if __name__== '__main__':
     #Animation nucleus
     fig,ax = plt.subplots(1,1)
 
-    ax.set_xlabel("R")
+    ax.set_xlabel(r"$R (\rm a_0)$")
     ax.set_ylabel(r"$\rho_N(R)$")
     mod_line = ax.plot(R_array,nucleus_evolved[0,:])
     ax.legend([r"$\rho_N(R)$"])
@@ -92,8 +92,8 @@ if __name__== '__main__':
     #Animation electron
     fig,ax = plt.subplots(1,1)
 
-    ax.set_xlabel("r")
-    ax.set_ylabel(r"$\rho_N(r)$")
+    ax.set_xlabel(r"$r (\rm a_0)$")
+    ax.set_ylabel(r"$\rho_e(r)$")
     mod_line = ax.plot(r_array,elec_evolved[0,:])
     ax.legend([r"$\rho_e(r)$"])
 
@@ -111,18 +111,19 @@ if __name__== '__main__':
    #Animation nuclear + pops
     fig,ax = plt.subplots(2,1)
 
-    ax[0].set_xlabel("R")
+    ax[0].set_xlabel(r"$R (\rm a_0)$")
     ax[0].set_ylabel(r"$\rho_N(R)$")
     mod_line = ax[0].plot(R_array,nucleus_evolved[0,:])
     ax[0].legend([r"$\rho_N(R)$"])
 
 
-    ax[1].set_xlabel(r"$t (fs)$")
+    ax[1].set_xlabel(r"$t (\rm fs)$")
     ax[1].set_ylabel(r"$P_m (t)$")
     pop1_line = ax[1].plot(t_snaps_array[0],pops_evolved[0,0])
     pop2_line = ax[1].plot(t_snaps_array[0],pops_evolved[0,1])
     ax[1].set_xlim([0,30])
     ax[1].legend([r"$P_1 (t)$",r"$P_2 (t)$"])
+    plt.tight_layout()
 
     def animat(i):
         mod_line[0].set_ydata(nucleus_evolved[i-1,:])
@@ -140,7 +141,7 @@ if __name__== '__main__':
 
 
     plt.figure()
-    plt.xlabel(r"$t (fs}$")
+    plt.xlabel(r"$t (\rm fs)$")
     plt.ylabel(r"$P_m (t)$")
     plt.xlim([0,30])
     plt.plot(t_snaps_array,pops_evolved[:,0],label="Ground state")
@@ -153,7 +154,7 @@ if __name__== '__main__':
 
 
     plt.figure()
-    plt.xlabel(r"$t (fs)$")
+    plt.xlabel(r"$t (\rm fs)$")
     plt.ylabel(r"$D_{12} (t)$")
     plt.xlim([0,30])
     plt.plot(t_snaps_array,deco_evolved[:,0,1])
