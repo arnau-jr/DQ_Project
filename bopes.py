@@ -189,7 +189,20 @@ def get_nonadiabatic_couplings(NR,dr,N_states,eigenstates,M=1836.152673):
 
     return S
 
-#S = get_nonadiabatic_couplings(NR,dr,N_states,estates)
+estates = np.load("eigenstates.npy")
 
-#with open("non_adiabatic_coupling.npy","wb") as f:
-#    np.save(f,S)
+S = get_nonadiabatic_couplings(NR,dr,N_states,estates)
+
+
+## Plotting the non-adiabatic coupling factors for each state
+
+plt.plot(R_array,S[:,0,0],label="ground state")
+plt.plot(R_array,S[:,1,1],label="first excited state")
+plt.plot(R_array,S[:,2,2],label="second excited state")
+plt.legend()
+plt.xlabel(r"$R (\rm a_0)$")
+plt.ylabel(r"energy [a.u.]")
+plt.savefig("pics/non_adiabatic_coupling.png")
+
+with open("non_adiabatic_coupling.npy","wb") as f:
+    np.save(f,S)
