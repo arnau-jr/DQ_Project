@@ -193,7 +193,6 @@ estates = np.load("eigenstates.npy")
 
 S = get_nonadiabatic_couplings(NR,dr,N_states,estates)
 
-
 ## Plotting the non-adiabatic coupling factors for each state
 
 plt.plot(R_array,S[:,0,0],label="ground state")

@@ -157,6 +157,7 @@ if __name__== '__main__':
     plt.xlabel(r"$t (\rm fs)$")
     plt.ylabel(r"$D_{12} (t)$")
     plt.xlim([0,30])
+    plt.title("Decoherence dynamics")
     plt.plot(t_snaps_array,deco_evolved[:,0,1])
     plt.savefig("pics/D12.png")
     plt.close()
