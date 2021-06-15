@@ -202,6 +202,7 @@ plt.legend()
 plt.xlabel(r"$R (\rm a_0)$")
 plt.ylabel(r"energy [a.u.]")
 plt.savefig("pics/non_adiabatic_coupling.png")
+plt.close()
 
 with open("non_adiabatic_coupling.npy","wb") as f:
     np.save(f,S)

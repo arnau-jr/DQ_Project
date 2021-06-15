@@ -25,10 +25,12 @@ if __name__== '__main__':
     else:
         ## loading the saved arrays from the bopes step
         eigenstates = np.load("eigenstates.npy")
+        S = np.load("non_adiabatic_coupling.npy")
 
-    #plt.figure()
-    #plt.imshow(eigenstates[:,:,1])
-    #plt.show()
+    # plt.figure()
+    # plt.imshow(eigenstates[:,:,0])
+    # plt.show()
+    # plt.close()
 
     ex1 = eigenstates[:,:,1]
 
@@ -42,6 +44,16 @@ if __name__== '__main__':
     print("Norm of initial electronic density:",np.sum(obv.get_reduced_electron_density(NR,Nr,dR,wave))*dr)
     print("Adiabatic pops of initial wave:",obv.get_adiabatic_pops(NR,Nr,dR,dr,N_states,eigenstates,wave))
     print("Deco. dynamics pops of initial wave:\n",obv.get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,wave))
+
+    plt.figure()
+    plt.plot(R_array,S[:,0,1],label=r"$S_{12}$")
+    plt.plot(R_array,S[:,0,2],label=r"$S_{13}$")
+    plt.plot(R_array,S[:,1,2],label=r"$S_{23}$")
+    plt.legend()
+    plt.xlabel(r"$R (\rm a_0)$")
+    plt.ylabel(r"$E (\rm E_H)$")
+    plt.savefig("pics/non_adiabatic_coupling_off.png")
+    plt.close()
 
     plt.figure()
     plt.xlabel(r"$R (\rm a_0)$")
@@ -155,9 +167,11 @@ if __name__== '__main__':
 
     plt.figure()
     plt.xlabel(r"$t (\rm fs)$")
-    plt.ylabel(r"$D_{12} (t)$")
+    plt.ylabel(r"$D_{nm} (t)$")
     plt.xlim([0,30])
-    plt.title("Decoherence dynamics")
-    plt.plot(t_snaps_array,deco_evolved[:,0,1])
-    plt.savefig("pics/D12.png")
+    plt.plot(t_snaps_array,deco_evolved[:,0,1],label=r"$D_{12}$")
+    plt.plot(t_snaps_array,deco_evolved[:,0,2],label=r"$D_{13}$")
+    plt.plot(t_snaps_array,deco_evolved[:,1,2],label=r"$D_{23}$")
+    plt.legend()
+    plt.savefig("pics/Dnm.png")
     plt.close()

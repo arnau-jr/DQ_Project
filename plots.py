@@ -9,7 +9,7 @@ eigenstates = np.load("eigenstates.npy")
 # Meshgrid conviently produces 2D-Grids
 XX, YY = np.meshgrid(r_array, R_array)
 
-eig0 = eigenstates[:,:,2]
+eig0 = np.abs(eigenstates[:,:,2])
 
 # Create a new figure
 figsize_x, figsize_y = mpl.rcParams["figure.figsize"]
@@ -49,12 +49,12 @@ for a in fig.axes[:-1]:
 
 ax_3d.set_zlabel('energy [a.u.]', size = 10)
 
-#fig.suptitle("Ground state")
-#fig.suptitle("First excited state")
+# fig.suptitle("Ground state")
+# fig.suptitle("First excited state")
 fig.suptitle("Second excited state")
 
 
 
-#plt.savefig("pics/groundstate.png")
-#plt.savefig("pics/first_excited.png")
+# plt.savefig("pics/groundstate.png")
+# plt.savefig("pics/first_excited.png")
 plt.savefig("pics/second_excited.png")
