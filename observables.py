@@ -47,8 +47,7 @@ def get_reduced_nuclear_density(NR,Nr,dr,psi):
 def get_reduced_electron_density(NR,Nr,dR,psi):
     rho = np.abs(psi)**2
     den = np.zeros([Nr])
-    #Should work, but loop is inefficient
-    for i in range(Nr):
-        den[i] = np.sum(rho[i*NR:(i+1)*NR])*dR
-
+    rhobis = np.reshape(rho,(Nr,NR))
+    
+    den = np.sum(rhobis,1)*dR
     return den
