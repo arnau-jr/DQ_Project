@@ -75,19 +75,23 @@ def hamiltonian(dr,Nr,r_array,R):
     H += SM_potential(r_array,R)*np.eye(Nr)
     
     #Diagonal
-    H += (-49./18.)*-np.eye(Nr)/(2.*dr**2)
+    L += -(-205./72.)*np.eye(N)/(2*dr**2)
 
     #First off diagonal
-    H += (3./2.)*-np.eye(Nr,k=1)/(2.*dr**2)
-    H += (3./2.)*-np.eye(Nr,k=-1)/(2.*dr**2)
+    L += -(8./5.)*np.eye(N,k=1)/(2*dr**2)
+    L += -(8./5.)*np.eye(N,k=-1)/(2*dr**2)
 
     #Second off diagonal
-    H += (-3./20.)*-np.eye(Nr,k=2)/(2.*dr**2)
-    H += (-3./20.)*-np.eye(Nr,k=-2)/(2.*dr**2)
+    L += -(-1./5.)*np.eye(N,k=2)/(2*dr**2)
+    L += -(-1./5.)*np.eye(N,k=-2)/(2*dr**2)
 
     #Third off diagonal
-    H += (1./90.)*-np.eye(Nr,k=3)/(2.*dr**2)
-    H += (1./90.)*-np.eye(Nr,k=-3)/(2.*dr**2)
+    L += -(8./315.)*np.eye(N,k=3)/(2*dr**2)
+    L += -(8./315.)*np.eye(N,k=-3)/(2*dr**2)
+
+    #Fourth off diagonal
+    L += -(-1./560.)*np.eye(N,k=4)/(2*dr**2)
+    L += -(-1./560.)*np.eye(N,k=-4)/(2*dr**2)
     return H
 
 #Generation of the BOPEs
@@ -173,17 +177,13 @@ def get_nonadiabatic_couplings(NR,dr,N_states,eigenstates,M=1836.152673):
     """
     S = np.zeros([NR,N_states,N_states])
 
-    for iR in range(0,NR):
+    for iR in range(1,NR-1):
         for i in range(0,N_states):
             for j in range(i,N_states):
-                phi_plus = np.roll(eigenstates[iR,:,i],1)
-                phi_plus[-1] = 0.
-                phi_minus = np.roll(eigenstates[iR,:,i],-1)
-                phi_minus[0] = 0.
 
                 #Apply laplacian and integrate (assuming phi=0. at the edges)
                 S[iR,i,j] = dr*np.sum(eigenstates[iR,:,j]*(1./M)\
-                    *((eigenstates[iR,:,i] - 0.5*phi_plus - 0.5*phi_minus)/dr**2))
+                    *((eigenstates[iR,:,i] - 0.5*eigenstates[iR-1,:,i] - 0.5*eigenstates[iR+1,:,i])/dr**2))
                 
                 S[iR,j,i] = S[iR,i,j]
 
@@ -194,14 +194,26 @@ estates = np.load("eigenstates.npy")
 S = get_nonadiabatic_couplings(NR,dr,N_states,estates)
 
 ## Plotting the non-adiabatic coupling factors for each state
-
-plt.plot(R_array,S[:,0,0],label="ground state")
-plt.plot(R_array,S[:,1,1],label="first excited state")
-plt.plot(R_array,S[:,2,2],label="second excited state")
+plt.figure()
+plt.xlim([-4,4])
+plt.plot(R_array,S[:,0,0],label=r"$S_{11}$")
+plt.plot(R_array,S[:,1,1],label=r"$S_{22}$")
+plt.plot(R_array,S[:,2,2],label=r"$S_{33}$")
 plt.legend()
 plt.xlabel(r"$R (\rm a_0)$")
-plt.ylabel(r"energy [a.u.]")
-plt.savefig("pics/non_adiabatic_coupling.png")
+plt.ylabel(r"$E (\rm E_H)$")
+plt.savefig("pics/non_adiabatic_coupling_diag.png")
+plt.close()
+
+plt.figure()
+plt.xlim([-4,4])
+plt.plot(R_array,S[:,0,1],label=r"$S_{12}$")
+plt.plot(R_array,S[:,0,2],label=r"$S_{13}$")
+plt.plot(R_array,S[:,1,2],label=r"$S_{23}$")
+plt.legend()
+plt.xlabel(r"$R (\rm a_0)$")
+plt.ylabel(r"$E (\rm E_H)$")
+plt.savefig("pics/non_adiabatic_coupling_off.png")
 plt.close()
 
 with open("non_adiabatic_coupling.npy","wb") as f:

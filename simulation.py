@@ -46,16 +46,6 @@ if __name__== '__main__':
     print("Deco. dynamics pops of initial wave:\n",obv.get_decoherence_dynamics(NR,Nr,dR,dr,N_states,eigenstates,wave))
 
     plt.figure()
-    plt.plot(R_array,S[:,0,1],label=r"$S_{12}$")
-    plt.plot(R_array,S[:,0,2],label=r"$S_{13}$")
-    plt.plot(R_array,S[:,1,2],label=r"$S_{23}$")
-    plt.legend()
-    plt.xlabel(r"$R (\rm a_0)$")
-    plt.ylabel(r"$E (\rm E_H)$")
-    plt.savefig("pics/non_adiabatic_coupling_off.png")
-    plt.close()
-
-    plt.figure()
     plt.xlabel(r"$R (\rm a_0)$")
     plt.ylabel(r"$\rho_N (R)$")
     plt.xlim([-10,10])
